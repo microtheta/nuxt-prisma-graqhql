@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "start": "node .output/server/index.mjs"
+  },
+  "devDependencies": {
+    "nuxt3": "latest",
+    "prisma": "^3.10.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.10.0",
+    "apollo-server": "^3.6.3",
+    "apollo-server-express": "^3.6.3",
+    "apollo-server-micro": "^3.6.3",
+    "express": "^4.17.3",
+    "graphql": "^16.3.0",
+    "micro": "^9.3.4",
+    "nexus": "^1.2.0"
+  }
+}

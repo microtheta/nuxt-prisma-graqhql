@@ -1,0 +1,3519 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model active_storage_attachments {
+  id                   BigInt               @id @default(autoincrement())
+  name                 String               @db.VarChar
+  record_type          String               @db.VarChar
+  record_id            BigInt
+  blob_id              BigInt
+  created_at           DateTime             @db.Timestamp(6)
+  active_storage_blobs active_storage_blobs @relation(fields: [blob_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_c3b3935057")
+
+  @@unique([record_type, record_id, name, blob_id], map: "index_active_storage_attachments_uniqueness")
+  @@index([blob_id], map: "index_active_storage_attachments_on_blob_id")
+}
+
+model active_storage_blobs {
+  id                         BigInt                       @id @default(autoincrement())
+  key                        String                       @unique(map: "index_active_storage_blobs_on_key") @db.VarChar
+  filename                   String                       @db.VarChar
+  content_type               String?                      @db.VarChar
+  metadata                   String?
+  byte_size                  BigInt
+  checksum                   String                       @db.VarChar
+  created_at                 DateTime                     @db.Timestamp(6)
+  active_storage_attachments active_storage_attachments[]
+}
+
+model ar_internal_metadata {
+  key        String   @id @db.VarChar
+  value      String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model ckeditor_assets {
+  id                Int      @id @default(autoincrement())
+  data_file_name    String   @db.VarChar
+  data_content_type String?  @db.VarChar
+  data_file_size    Int?
+  assetable_id      Int?
+  assetable_type    String?  @db.VarChar(30)
+  type              String?  @db.VarChar(30)
+  width             Int?
+  height            Int?
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @db.Timestamp(6)
+
+  @@index([assetable_type, assetable_id], map: "idx_ckeditor_assetable")
+  @@index([assetable_type, type, assetable_id], map: "idx_ckeditor_assetable_type")
+}
+
+model delayed_jobs {
+  id         Int       @id @default(autoincrement())
+  priority   Int       @default(0)
+  attempts   Int       @default(0)
+  handler    String
+  last_error String?
+  run_at     DateTime? @db.Timestamp(6)
+  locked_at  DateTime? @db.Timestamp(6)
+  failed_at  DateTime? @db.Timestamp(6)
+  locked_by  String?   @db.VarChar
+  queue      String?   @db.VarChar
+  created_at DateTime? @db.Timestamp(6)
+  updated_at DateTime? @db.Timestamp(6)
+
+  @@index([priority, run_at], map: "delayed_jobs_priority")
+}
+
+model friendly_id_slugs {
+  id             Int       @id @default(autoincrement())
+  slug           String    @db.VarChar
+  sluggable_id   Int
+  sluggable_type String?   @db.VarChar(50)
+  scope          String?   @db.VarChar
+  created_at     DateTime? @db.Timestamp(6)
+  deleted_at     DateTime? @db.Timestamp(6)
+
+  @@unique([slug, sluggable_type, scope], map: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope")
+  @@index([deleted_at], map: "index_friendly_id_slugs_on_deleted_at")
+  @@index([slug, sluggable_type], map: "index_friendly_id_slugs_on_slug_and_sluggable_type")
+  @@index([sluggable_id], map: "index_friendly_id_slugs_on_sluggable_id")
+  @@index([sluggable_type], map: "index_friendly_id_slugs_on_sluggable_type")
+}
+
+model redirect_rules {
+  id                       Int       @id @default(autoincrement())
+  source                   String    @db.VarChar
+  source_is_regex          Boolean   @default(false)
+  source_is_case_sensitive Boolean   @default(false)
+  destination              String    @db.VarChar
+  active                   Boolean?  @default(false)
+  created_at               DateTime? @db.Timestamp(6)
+  updated_at               DateTime? @db.Timestamp(6)
+  permanent                Boolean   @default(false)
+
+  @@index([active], map: "index_redirect_rules_on_active")
+  @@index([source], map: "index_redirect_rules_on_source")
+  @@index([source_is_case_sensitive], map: "index_redirect_rules_on_source_is_case_sensitive")
+  @@index([source_is_regex], map: "index_redirect_rules_on_source_is_regex")
+}
+
+model request_environment_rules {
+  id                                  Int       @id @default(autoincrement())
+  redirect_rule_id                    Int
+  environment_key_name                String    @db.VarChar
+  environment_value                   String    @db.VarChar
+  environment_value_is_regex          Boolean   @default(false)
+  environment_value_is_case_sensitive Boolean   @default(true)
+  created_at                          DateTime? @db.Timestamp(6)
+  updated_at                          DateTime? @db.Timestamp(6)
+
+  @@index([redirect_rule_id], map: "index_request_environment_rules_on_redirect_rule_id")
+}
+
+model schema_migrations {
+  version String @unique(map: "unique_schema_migrations") @db.VarChar
+}
+
+model spree_addon_variants {
+  id         BigInt   @id @default(autoincrement())
+  addon_id   BigInt?
+  variant_id BigInt?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([addon_id], map: "index_spree_addon_variants_on_addon_id")
+  @@index([variant_id], map: "index_spree_addon_variants_on_variant_id")
+}
+
+model spree_addresses {
+  id                Int      @id @default(autoincrement())
+  firstname         String?  @db.VarChar
+  lastname          String?  @db.VarChar
+  address1          String?  @db.VarChar
+  address2          String?  @db.VarChar
+  city              String?  @db.VarChar
+  zipcode           String?  @db.VarChar
+  phone             String?  @db.VarChar
+  state_name        String?  @db.VarChar
+  alternative_phone String?  @db.VarChar
+  company           String?  @db.VarChar
+  state_id          Int?
+  country_id        Int?
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @db.Timestamp(6)
+  validated         Boolean? @default(false)
+
+  @@index([firstname], map: "index_addresses_on_firstname")
+  @@index([lastname], map: "index_addresses_on_lastname")
+  @@index([country_id], map: "index_spree_addresses_on_country_id")
+  @@index([state_id], map: "index_spree_addresses_on_state_id")
+}
+
+model spree_adjustments {
+  id              Int      @id @default(autoincrement())
+  source_id       Int?
+  source_type     String?  @db.VarChar
+  adjustable_id   Int?
+  adjustable_type String?  @db.VarChar
+  amount          Decimal? @db.Decimal(10, 2)
+  label           String?  @db.VarChar
+  mandatory       Boolean?
+  eligible        Boolean? @default(true)
+  created_at      DateTime @db.Timestamp(6)
+  updated_at      DateTime @db.Timestamp(6)
+  state           String?  @db.VarChar
+  order_id        Int
+  included        Boolean? @default(false)
+
+  @@index([adjustable_id, adjustable_type], map: "index_spree_adjustments_on_adjustable_id_and_adjustable_type")
+  @@index([eligible], map: "index_spree_adjustments_on_eligible")
+  @@index([order_id], map: "index_spree_adjustments_on_order_id")
+  @@index([source_id, source_type], map: "index_spree_adjustments_on_source_id_and_source_type")
+}
+
+model spree_advertisement_images {
+  id                         BigInt    @id @default(autoincrement())
+  link_url                   String?   @db.VarChar
+  image_alt                  String?   @db.VarChar
+  promotion_advertisement_id BigInt?
+  publish_at                 DateTime? @db.Timestamp(6)
+  unpublish_at               DateTime? @db.Timestamp(6)
+  created_at                 DateTime  @db.Timestamp(6)
+  updated_at                 DateTime  @db.Timestamp(6)
+
+  @@index([promotion_advertisement_id], map: "index_spree_advertisement_images_on_promotion_advertisement_id")
+}
+
+model spree_affiliate_commission_rules {
+  id                 Int      @id @default(autoincrement())
+  commission_rule_id Int?
+  affiliate_id       Int?
+  rate               Decimal? @db.Decimal
+  fixed_commission   Decimal? @db.Decimal
+  active             Boolean  @default(false)
+
+  @@index([active], map: "index_spree_affiliate_commission_rules_on_active")
+  @@index([affiliate_id], map: "index_spree_affiliate_commission_rules_on_affiliate_id")
+  @@index([commission_rule_id], map: "index_spree_affiliate_commission_rules_on_commission_rule_id")
+}
+
+model spree_affiliates {
+  id               Int       @id @default(autoincrement())
+  name             String?   @db.VarChar
+  path             String?   @db.VarChar
+  partial          String?   @db.VarChar
+  layout           String?   @db.VarChar
+  email            String?   @db.VarChar
+  active           Boolean?  @default(false)
+  activation_token String?   @db.VarChar
+  activated_at     DateTime? @db.Timestamp(6)
+
+  @@index([active], map: "index_spree_affiliates_on_active")
+  @@index([email], map: "index_spree_affiliates_on_email")
+}
+
+model spree_affiliates_promotion_rules {
+  id                Int  @id @default(autoincrement())
+  affiliate_id      Int?
+  promotion_rule_id Int?
+
+  @@index([affiliate_id], map: "index_spree_affiliates_promotion_rules_on_affiliate_id")
+  @@index([promotion_rule_id], map: "index_spree_affiliates_promotion_rules_on_promotion_rule_id")
+}
+
+model spree_afterpay_transactions {
+  id                 BigInt   @id @default(autoincrement())
+  source_id          BigInt?
+  amount             Decimal? @db.Decimal(8, 2)
+  action             String?  @db.VarChar
+  authorization_code String?  @db.VarChar
+  originator_type    String?  @db.VarChar
+  originator_id      BigInt?
+  success            Boolean?
+  created_at         DateTime @db.Timestamp(6)
+  updated_at         DateTime @db.Timestamp(6)
+
+  @@index([originator_type, originator_id], map: "index_spree_afterpay_transactions_on_originator")
+  @@index([source_id], map: "index_spree_afterpay_transactions_on_source_id")
+}
+
+model spree_afterpays {
+  id                BigInt    @id @default(autoincrement())
+  payment_method_id BigInt?
+  user_id           BigInt?
+  email             String?   @db.VarChar
+  transaction_id    String?   @db.VarChar
+  expire_at         DateTime? @db.Timestamp(6)
+  amount_allocated  Decimal?  @db.Decimal(8, 2)
+  created_at        DateTime  @db.Timestamp(6)
+  updated_at        DateTime  @db.Timestamp(6)
+  afterpay_order_id String?   @default("") @db.VarChar
+
+  @@index([payment_method_id], map: "index_spree_afterpays_on_payment_method_id")
+  @@index([user_id], map: "index_spree_afterpays_on_user_id")
+}
+
+model spree_articles {
+  id               BigInt   @id @default(autoincrement())
+  title            String?  @db.VarChar
+  body             String?
+  slug             String?  @db.VarChar
+  position         Int
+  visible          Boolean  @default(false)
+  meta_title       String?  @db.VarChar
+  meta_description String?
+  publishing_date  String?  @db.VarChar
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_articles_on_position")
+  @@index([slug], map: "index_spree_articles_on_slug")
+}
+
+model spree_assets {
+  id                      Int       @id @default(autoincrement())
+  viewable_id             Int?
+  viewable_type           String?   @db.VarChar
+  attachment_width        Int?
+  attachment_height       Int?
+  attachment_file_size    Int?
+  position                Int?
+  attachment_content_type String?   @db.VarChar
+  attachment_file_name    String?   @db.VarChar
+  type                    String?   @db.VarChar(75)
+  attachment_updated_at   DateTime? @db.Timestamp(6)
+  alt                     String?
+  created_at              DateTime? @db.Timestamp(6)
+  updated_at              DateTime? @db.Timestamp(6)
+  digital_asset_id        Int?
+  kind                    String?   @db.VarChar
+  brosa_created_at        DateTime? @db.Timestamp(6)
+  brosa_updated_at        DateTime? @db.Timestamp(6)
+  media_id                Int?
+  changed_at              DateTime? @db.Timestamp(6)
+  attachment_processing   Boolean?
+  cloudinary_image_url    String?
+  deleted_at              DateTime? @db.Timestamp(6)
+
+  @@index([viewable_id], map: "index_assets_on_viewable_id")
+  @@index([viewable_type, type], map: "index_assets_on_viewable_type_and_type")
+  @@index([deleted_at], map: "index_spree_assets_on_deleted_at")
+  @@index([digital_asset_id], map: "index_spree_assets_on_digital_asset_id")
+  @@index([position], map: "index_spree_assets_on_position")
+}
+
+model spree_attribute_rules {
+  id            Int       @id @default(autoincrement())
+  taxon_rule_id Int?
+  property_id   Int?
+  value         String?   @db.VarChar
+  created_at    DateTime  @db.Timestamp(6)
+  updated_at    DateTime  @db.Timestamp(6)
+  deleted_at    DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_attribute_rules_on_deleted_at")
+  @@index([property_id], map: "index_spree_attribute_rules_on_property_id")
+  @@index([taxon_rule_id], map: "index_spree_attribute_rules_on_taxon_rule_id")
+}
+
+model spree_backend_ab_campaigns {
+  id          BigInt   @id @default(autoincrement())
+  name        String?  @db.VarChar
+  key         String?  @db.VarChar
+  device_type Int      @default(0)
+  page_type   Int      @default(0)
+  enabled     Boolean  @default(false)
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+
+  @@index([key], map: "index_spree_backend_ab_campaigns_on_key")
+}
+
+model spree_calculators {
+  id              Int       @id @default(autoincrement())
+  type            String?   @db.VarChar
+  calculable_id   Int?
+  calculable_type String?   @db.VarChar
+  created_at      DateTime  @db.Timestamp(6)
+  updated_at      DateTime  @db.Timestamp(6)
+  preferences     String?
+  deleted_at      DateTime? @db.Timestamp(6)
+
+  @@index([calculable_id, calculable_type], map: "index_spree_calculators_on_calculable_id_and_calculable_type")
+  @@index([deleted_at], map: "index_spree_calculators_on_deleted_at")
+  @@index([id, type], map: "index_spree_calculators_on_id_and_type")
+}
+
+model spree_category_banner_images {
+  id                 Int       @id @default(autoincrement())
+  taxon_id           Int?
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  hero_heading       String?   @db.VarChar
+  hero_sub_heading   String?   @db.VarChar
+  title              String?   @db.VarChar
+  button_title       String?   @db.VarChar
+  button_link        String?   @db.VarChar
+  image_link         String?   @db.VarChar
+  left               Boolean   @default(true)
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+  deleted_at         DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_category_banner_images_on_deleted_at")
+  @@index([taxon_id], map: "index_spree_category_banner_images_on_taxon_id")
+}
+
+model spree_category_images {
+  id         Int       @id @default(autoincrement())
+  taxon_id   Int?
+  deleted_at DateTime? @db.Timestamp(6)
+  created_at DateTime? @db.Timestamp(6)
+  updated_at DateTime? @db.Timestamp(6)
+}
+
+model spree_category_modules {
+  id                 Int       @id @default(autoincrement())
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  image_alt          String?   @db.VarChar
+  url                String?   @db.VarChar
+  title              String?   @db.VarChar
+  description        String?
+  active             Boolean   @default(false)
+  position           Int
+  taxon_id           Int?
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+  deleted_at         DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_category_modules_on_deleted_at")
+  @@index([position], map: "index_spree_category_modules_on_position")
+  @@index([taxon_id], map: "index_spree_category_modules_on_taxon_id")
+}
+
+model spree_category_section_items {
+  id                  Int       @id @default(autoincrement())
+  title               String?   @db.VarChar
+  link                String?   @db.VarChar
+  category_section_id Int?
+  position            Int?
+  active              Boolean?
+  image_alt           String?   @db.VarChar
+  created_at          DateTime? @db.Timestamp(6)
+  updated_at          DateTime? @db.Timestamp(6)
+
+  @@index([active], map: "index_spree_category_section_items_on_active")
+  @@index([position], map: "index_spree_category_section_items_on_position")
+}
+
+model spree_category_sections {
+  id          Int       @id @default(autoincrement())
+  layout      String?   @db.VarChar
+  title       String?   @db.VarChar
+  description String?   @db.VarChar
+  taxon_id    Int?
+  position    Int?
+  active      Boolean?
+  created_at  DateTime? @db.Timestamp(6)
+  updated_at  DateTime? @db.Timestamp(6)
+  token       String?   @db.VarChar
+  deleted_at  DateTime? @db.Timestamp(6)
+
+  @@index([active], map: "index_spree_category_sections_on_active")
+  @@index([deleted_at], map: "index_spree_category_sections_on_deleted_at")
+  @@index([position], map: "index_spree_category_sections_on_position")
+}
+
+model spree_center_split_section_images {
+  id                           BigInt    @id @default(autoincrement())
+  subheading                   String?   @db.VarChar
+  link_url                     String?   @db.VarChar
+  image_alt                    String?   @db.VarChar
+  home_center_split_section_id BigInt?
+  section_type                 Int?
+  default                      Boolean?
+  publish_at                   DateTime? @db.Timestamp(6)
+  unpublish_at                 DateTime? @db.Timestamp(6)
+  created_at                   DateTime  @db.Timestamp(6)
+  updated_at                   DateTime  @db.Timestamp(6)
+
+  @@index([home_center_split_section_id], map: "index_center_split_section_images_home_center_split_section_id")
+}
+
+model spree_commission_rules {
+  id               Int      @id @default(autoincrement())
+  name             String?  @db.VarChar
+  description      String?
+  fixed_commission Boolean
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @db.Timestamp(6)
+}
+
+model spree_commission_transactions {
+  id                  Int      @id @default(autoincrement())
+  affiliate_id        Int?
+  commission_id       Int?
+  amount              Decimal? @db.Decimal
+  locked              Boolean  @default(false)
+  commissionable_id   Int?
+  commissionable_type String?  @db.VarChar
+  created_at          DateTime @db.Timestamp(6)
+  updated_at          DateTime @db.Timestamp(6)
+
+  @@index([affiliate_id], map: "index_spree_commission_transactions_on_affiliate_id")
+  @@index([commission_id], map: "index_spree_commission_transactions_on_commission_id")
+}
+
+model spree_commissions {
+  id                 Int       @id @default(autoincrement())
+  affiliate_id       Int?
+  start_date         DateTime? @db.Timestamp(6)
+  end_date           DateTime? @db.Timestamp(6)
+  paid               Boolean   @default(false)
+  total              Decimal?  @db.Decimal
+  transactions_count Int?
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+
+  @@index([affiliate_id], map: "index_spree_commissions_on_affiliate_id")
+  @@index([end_date], map: "index_spree_commissions_on_end_date")
+  @@index([start_date], map: "index_spree_commissions_on_start_date")
+}
+
+model spree_complementary_variants {
+  id               BigInt   @id @default(autoincrement())
+  complementary_id BigInt?
+  variant_id       BigInt?
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @db.Timestamp(6)
+
+  @@index([complementary_id], map: "index_spree_complementary_variants_on_complementary_id")
+  @@index([variant_id], map: "index_spree_complementary_variants_on_variant_id")
+}
+
+model spree_components {
+  id               Int       @id @default(autoincrement())
+  core_resource_id Int?
+  name             String?   @db.VarChar
+  created_at       DateTime? @db.Timestamp(6)
+  updated_at       DateTime? @db.Timestamp(6)
+  uid              String?   @db.VarChar
+  position         Int?
+
+  @@index([core_resource_id], map: "index_spree_components_on_core_resource_id")
+}
+
+model spree_countries {
+  id               Int       @id @default(autoincrement())
+  iso_name         String?   @db.VarChar
+  iso              String?   @db.VarChar
+  iso3             String?   @db.VarChar
+  name             String?   @db.VarChar
+  numcode          Int?
+  states_required  Boolean?  @default(false)
+  updated_at       DateTime? @db.Timestamp(6)
+  zipcode_required Boolean?  @default(true)
+}
+
+model spree_credit_cards {
+  id                          Int       @id @default(autoincrement())
+  month                       String?   @db.VarChar
+  year                        String?   @db.VarChar
+  cc_type                     String?   @db.VarChar
+  last_digits                 String?   @db.VarChar
+  address_id                  Int?
+  gateway_customer_profile_id String?   @db.VarChar
+  gateway_payment_profile_id  String?   @db.VarChar
+  created_at                  DateTime  @db.Timestamp(6)
+  updated_at                  DateTime  @db.Timestamp(6)
+  name                        String?   @db.VarChar
+  user_id                     Int?
+  payment_method_id           Int?
+  default                     Boolean   @default(false)
+  deleted_at                  DateTime? @db.Timestamp(6)
+
+  @@index([address_id], map: "index_spree_credit_cards_on_address_id")
+  @@index([deleted_at], map: "index_spree_credit_cards_on_deleted_at")
+  @@index([payment_method_id], map: "index_spree_credit_cards_on_payment_method_id")
+  @@index([user_id], map: "index_spree_credit_cards_on_user_id")
+}
+
+model spree_customer_images {
+  id                      Int       @id @default(autoincrement())
+  attachment_file_name    String?   @db.VarChar
+  attachment_content_type String?   @db.VarChar
+  attachment_file_size    Int?
+  attachment_updated_at   DateTime? @db.Timestamp(6)
+  customer_review_id      Int?
+  status                  Int?      @default(0)
+  created_at              DateTime  @db.Timestamp(6)
+  updated_at              DateTime  @db.Timestamp(6)
+  product_id              Int?
+
+  @@index([customer_review_id], map: "index_spree_customer_images_on_customer_review_id")
+  @@index([status], map: "index_spree_customer_images_on_status")
+}
+
+model spree_customer_returns {
+  id                Int      @id @default(autoincrement())
+  number            String?  @unique(map: "index_spree_customer_returns_on_number") @db.VarChar
+  stock_location_id Int?
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @db.Timestamp(6)
+
+  @@index([stock_location_id], map: "index_spree_customer_returns_on_stock_location_id")
+}
+
+model spree_customer_reviews {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  email      String?  @db.VarChar
+  user_id    Int?
+  product_id Int?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([product_id], map: "index_spree_customer_reviews_on_product_id")
+}
+
+model spree_details {
+  id          Int      @id @default(autoincrement())
+  position    Int      @default(0)
+  active      Boolean  @default(false)
+  title       String?  @db.VarChar
+  description String?
+  object_id   Int?
+  object_type String?  @db.VarChar
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_details_on_position")
+}
+
+model spree_digital_assets {
+  id                      Int       @id @default(autoincrement())
+  name                    String?   @db.VarChar
+  attachment_file_name    String?   @db.VarChar
+  attachment_content_type String?   @db.VarChar
+  attachment_file_size    Int?
+  attachment_updated_at   DateTime? @db.Timestamp(6)
+  folder_id               Int?
+  created_at              DateTime  @db.Timestamp(6)
+  updated_at              DateTime  @db.Timestamp(6)
+  brosa_created_at        DateTime? @db.Timestamp(6)
+  brosa_updated_at        DateTime? @db.Timestamp(6)
+  link_url                String?   @db.VarChar
+  approved                Boolean   @default(true)
+}
+
+model spree_eta_rules {
+  id            Int       @id @default(autoincrement())
+  taxon_rule_id Int?
+  rule_type     Int       @default(0)
+  days_gap      Int?      @default(0)
+  date          DateTime? @db.Date
+  created_at    DateTime  @db.Timestamp(6)
+  updated_at    DateTime  @db.Timestamp(6)
+  deleted_at    DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_eta_rules_on_deleted_at")
+  @@index([taxon_rule_id], map: "index_spree_eta_rules_on_taxon_rule_id")
+}
+
+model spree_etas {
+  id                        Int      @id @default(autoincrement())
+  sku                       String?  @db.VarChar
+  week                      Int?
+  range_type                String?  @db.VarChar
+  range                     Int?
+  tooltip                   String?  @db.VarChar
+  label                     String?  @db.VarChar
+  created_at                DateTime @db.Timestamp(6)
+  updated_at                DateTime @db.Timestamp(6)
+  status                    String?  @db.VarChar
+  status_index              Int?
+  stock                     Int?
+  original_classification   String?  @db.VarChar
+  calculated_classification String?  @default("MTO") @db.VarChar
+  sell                      Boolean  @default(true)
+  abx                       Boolean? @default(false)
+
+  @@index([sku], map: "index_spree_etas_on_sku")
+}
+
+model spree_exception_pages {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  content    String?
+  published  Boolean  @default(false)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model spree_fabric_variants {
+  id         Int      @id @default(autoincrement())
+  fabric_id  Int?
+  variant_id Int?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([fabric_id], map: "index_spree_fabric_variants_on_fabric_id")
+  @@index([variant_id], map: "index_spree_fabric_variants_on_variant_id")
+}
+
+model spree_faqs {
+  id               Int       @id @default(autoincrement())
+  name             String?   @db.VarChar
+  core_resource_id Int?
+  created_at       DateTime  @db.Timestamp(6)
+  updated_at       DateTime  @db.Timestamp(6)
+  brosa_created_at DateTime? @db.Timestamp(6)
+  brosa_updated_at DateTime? @db.Timestamp(6)
+}
+
+model spree_feedback_reviews {
+  id         Int      @id @default(autoincrement())
+  user_id    Int?
+  review_id  Int
+  rating     Int?     @default(0)
+  comment    String?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+  locale     String?  @default("en") @db.VarChar
+
+  @@index([review_id], map: "index_spree_feedback_reviews_on_review_id")
+  @@index([user_id], map: "index_spree_feedback_reviews_on_user_id")
+}
+
+model spree_folders {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  parent_id  Int?
+  lft        Int
+  rgt        Int
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([lft], map: "index_spree_folders_on_lft")
+  @@index([parent_id], map: "index_spree_folders_on_parent_id")
+  @@index([rgt], map: "index_spree_folders_on_rgt")
+}
+
+model spree_gateways {
+  id          Int      @id @default(autoincrement())
+  type        String?  @db.VarChar
+  name        String?  @db.VarChar
+  description String?
+  active      Boolean? @default(true)
+  environment String?  @default("development") @db.VarChar
+  server      String?  @default("test") @db.VarChar
+  test_mode   Boolean? @default(true)
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+  preferences String?
+
+  @@index([active], map: "index_spree_gateways_on_active")
+  @@index([test_mode], map: "index_spree_gateways_on_test_mode")
+}
+
+model spree_gift_card_transactions {
+  id                 Int       @id @default(autoincrement())
+  amount             Decimal?  @db.Decimal(6, 2)
+  gift_card_id       Int?
+  order_id           Int?
+  created_at         DateTime? @db.Timestamp(6)
+  updated_at         DateTime? @db.Timestamp(6)
+  action             String?   @db.VarChar
+  authorization_code String?   @db.VarChar
+}
+
+model spree_gift_cards {
+  id                Int       @id @default(autoincrement())
+  variant_id        Int
+  line_item_id      Int?
+  email             String    @db.VarChar
+  name              String?   @db.VarChar
+  note              String?
+  code              String    @db.VarChar
+  sent_at           DateTime? @db.Timestamp(6)
+  current_value     Decimal   @db.Decimal(8, 2)
+  original_value    Decimal   @db.Decimal(8, 2)
+  created_at        DateTime? @db.Timestamp(6)
+  updated_at        DateTime? @db.Timestamp(6)
+  authorized_amount Decimal   @default(0.0) @db.Decimal(8, 2)
+  enabled           Boolean?  @default(true)
+}
+
+model spree_hero_banners {
+  id                    Int       @id @default(autoincrement())
+  type                  String?   @db.VarChar
+  image_file_name       String?   @db.VarChar
+  image_content_type    String?   @db.VarChar
+  image_file_size       Int?
+  image_updated_at      DateTime? @db.Timestamp(6)
+  title                 String?   @db.VarChar
+  link                  String?   @db.VarChar
+  left                  Boolean   @default(true)
+  active                Boolean   @default(false)
+  color                 String?   @db.VarChar
+  created_at            DateTime  @db.Timestamp(6)
+  updated_at            DateTime  @db.Timestamp(6)
+  image_lg_file_name    String?   @db.VarChar
+  image_lg_content_type String?   @db.VarChar
+  image_lg_file_size    Int?
+  image_lg_updated_at   DateTime? @db.Timestamp(6)
+  image_alt             String?   @db.VarChar
+  activate_at           DateTime? @db.Timestamp(6)
+}
+
+model spree_home_banner_sections {
+  id         BigInt   @id @default(autoincrement())
+  name       String?  @db.VarChar
+  location   Int
+  active     Boolean  @default(false)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model spree_home_center_split_sections {
+  id         BigInt   @id @default(autoincrement())
+  heading    String?  @db.VarChar
+  name       String?  @db.VarChar
+  location   Int
+  active     Boolean  @default(false)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model spree_home_page_reviews {
+  id         Int      @id @default(autoincrement())
+  title      String?  @db.VarChar
+  body       String?
+  rating     Int      @default(1)
+  active     Boolean  @default(false)
+  position   Int
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_home_page_reviews_on_position")
+}
+
+model spree_home_slider_images {
+  id                            BigInt   @id @default(autoincrement())
+  subheading                    String?  @db.VarChar
+  link_url                      String?  @db.VarChar
+  image_alt                     String?  @db.VarChar
+  home_slider_images_section_id BigInt?
+  active                        Boolean  @default(false)
+  created_at                    DateTime @db.Timestamp(6)
+  updated_at                    DateTime @db.Timestamp(6)
+  position                      Int?
+
+  @@index([home_slider_images_section_id], map: "index_spree_home_slider_images_on_home_slider_images_section_id")
+}
+
+model spree_home_slider_images_sections {
+  id           BigInt   @id @default(autoincrement())
+  heading      String?  @db.VarChar
+  name         String?  @db.VarChar
+  active       Boolean  @default(false)
+  created_at   DateTime @db.Timestamp(6)
+  updated_at   DateTime @db.Timestamp(6)
+  section_type Int?     @default(0)
+}
+
+model spree_home_text_image_split_sections {
+  id                       BigInt   @id @default(autoincrement())
+  name                     String?  @db.VarChar
+  location                 Int
+  active                   Boolean  @default(false)
+  text_section_percentage  Int      @default(35)
+  image_section_percentage Int      @default(65)
+  created_at               DateTime @db.Timestamp(6)
+  updated_at               DateTime @db.Timestamp(6)
+}
+
+model spree_hotspot_image_properties {
+  id                 Int       @id @default(autoincrement())
+  kind               Int
+  name               String?   @db.VarChar
+  description        String?
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  active             Boolean   @default(false)
+  position           Int?
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+
+  @@index([active], map: "index_spree_hotspot_image_properties_on_active")
+  @@index([kind], map: "index_spree_hotspot_image_properties_on_kind")
+  @@index([position], map: "index_spree_hotspot_image_properties_on_position")
+}
+
+model spree_hotspot_images {
+  id                    Int       @id @default(autoincrement())
+  name                  String?   @db.VarChar
+  description           String?
+  image_file_name       String?   @db.VarChar
+  image_content_type    String?   @db.VarChar
+  image_file_size       Int?
+  image_updated_at      DateTime? @db.Timestamp(6)
+  permalink             String?   @db.VarChar
+  published             Boolean   @default(false)
+  created_at            DateTime  @db.Timestamp(6)
+  updated_at            DateTime  @db.Timestamp(6)
+  replace_with_hotspots Boolean   @default(false)
+  ugc                   Boolean   @default(false)
+  rank                  Int       @default(1)
+  position              Int       @default(0)
+  status                Int?      @default(0)
+  title                 String?   @db.VarChar
+  show_page_description String?   @db.VarChar
+
+  @@index([position], map: "index_spree_hotspot_images_on_position")
+  @@index([published], map: "index_spree_hotspot_images_on_published")
+  @@index([rank], map: "index_spree_hotspot_images_on_rank")
+  @@index([status], map: "index_spree_hotspot_images_on_status")
+}
+
+model spree_hotspot_images_classifications {
+  id                        Int      @id @default(autoincrement())
+  hotspot_image_id          Int?
+  hotspot_image_property_id Int?
+  created_at                DateTime @db.Timestamp(6)
+  updated_at                DateTime @db.Timestamp(6)
+
+  @@index([hotspot_image_id], map: "index_hotspot_images_classifications_hotspot_image_id")
+  @@index([hotspot_image_property_id], map: "index_hotspot_images_classifications_hotspot_image_property_id")
+}
+
+model spree_hotspots {
+  id               Int      @id @default(autoincrement())
+  name             String?  @db.VarChar
+  variant_id       Int?
+  hotspot_image_id Int?
+  active           Boolean  @default(false)
+  mobile           Boolean  @default(false)
+  top              Decimal? @db.Decimal
+  left             Decimal? @db.Decimal
+  similar_match    Boolean  @default(false)
+
+  @@index([hotspot_image_id], map: "index_spree_hotspots_on_hotspot_image_id")
+  @@index([variant_id], map: "index_spree_hotspots_on_variant_id")
+}
+
+model spree_hullabalook_banner_images {
+  id         BigInt    @id @default(autoincrement())
+  taxon_id   BigInt?
+  deleted_at DateTime? @db.Timestamp(6)
+  created_at DateTime  @db.Timestamp(6)
+  updated_at DateTime  @db.Timestamp(6)
+
+  @@index([taxon_id], map: "index_spree_hullabalook_banner_images_on_taxon_id")
+}
+
+model spree_image_split_sections {
+  id                               BigInt    @id @default(autoincrement())
+  image_alt                        String?   @db.VarChar
+  link_url                         String?   @db.VarChar
+  default                          Boolean?
+  publish_at                       DateTime? @db.Timestamp(6)
+  unpublish_at                     DateTime? @db.Timestamp(6)
+  home_text_image_split_section_id BigInt?
+  created_at                       DateTime  @db.Timestamp(6)
+  updated_at                       DateTime  @db.Timestamp(6)
+
+  @@index([home_text_image_split_section_id], map: "index_image_split_sections_home_text_image_split_section_id")
+}
+
+model spree_inventory_units {
+  id                      Int      @id @default(autoincrement())
+  state                   String?  @db.VarChar
+  variant_id              Int?
+  order_id                Int?
+  shipment_id             Int?
+  created_at              DateTime @db.Timestamp(6)
+  updated_at              DateTime @db.Timestamp(6)
+  pending                 Boolean? @default(true)
+  line_item_id            Int?
+  quantity                Int?     @default(1)
+  original_return_item_id BigInt?
+
+  @@index([order_id], map: "index_inventory_units_on_order_id")
+  @@index([shipment_id], map: "index_inventory_units_on_shipment_id")
+  @@index([variant_id], map: "index_inventory_units_on_variant_id")
+  @@index([line_item_id], map: "index_spree_inventory_units_on_line_item_id")
+  @@index([original_return_item_id], map: "index_spree_inventory_units_on_original_return_item_id")
+}
+
+model spree_lifestyle_images {
+  id         BigInt   @id @default(autoincrement())
+  taxon_id   BigInt?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([taxon_id], map: "index_spree_lifestyle_images_on_taxon_id")
+}
+
+model spree_limited_time_deals {
+  id                       Int       @id @default(autoincrement())
+  left_image_file_name     String?   @db.VarChar
+  left_image_content_type  String?   @db.VarChar
+  left_image_file_size     Int?
+  left_image_updated_at    DateTime? @db.Timestamp(6)
+  left_image_alt           String?   @db.VarChar
+  title                    String?   @db.VarChar
+  description              String?   @db.VarChar
+  color                    String?   @db.VarChar
+  right_image_file_name    String?   @db.VarChar
+  right_image_content_type String?   @db.VarChar
+  right_image_file_size    Int?
+  right_image_updated_at   DateTime? @db.Timestamp(6)
+  right_image_alt          String?   @db.VarChar
+  url                      String?   @db.VarChar
+  active                   Boolean   @default(false)
+  position                 Int
+  created_at               DateTime  @db.Timestamp(6)
+  updated_at               DateTime  @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_limited_time_deals_on_position")
+}
+
+model spree_line_items {
+  id                           Int      @id @default(autoincrement())
+  variant_id                   Int?
+  order_id                     Int?
+  quantity                     Int
+  price                        Decimal  @db.Decimal(10, 2)
+  created_at                   DateTime @db.Timestamp(6)
+  updated_at                   DateTime @db.Timestamp(6)
+  currency                     String?  @db.VarChar
+  cost_price                   Decimal? @db.Decimal(10, 2)
+  tax_category_id              Int?
+  adjustment_total             Decimal? @default(0.0) @db.Decimal(10, 2)
+  additional_tax_total         Decimal? @default(0.0) @db.Decimal(10, 2)
+  promo_total                  Decimal? @default(0.0) @db.Decimal(10, 2)
+  included_tax_total           Decimal  @default(0.0) @db.Decimal(10, 2)
+  pre_tax_amount               Decimal  @default(0.0) @db.Decimal(12, 4)
+  taxable_adjustment_total     Decimal  @default(0.0) @db.Decimal(10, 2)
+  non_taxable_adjustment_total Decimal  @default(0.0) @db.Decimal(10, 2)
+  care_covered_line_item_id    BigInt?
+  is_care_cover                Boolean  @default(false)
+  is_abx                       Boolean  @default(false)
+
+  @@index([care_covered_line_item_id], map: "index_spree_line_items_on_care_covered_line_item_id")
+  @@index([order_id], map: "index_spree_line_items_on_order_id")
+  @@index([tax_category_id], map: "index_spree_line_items_on_tax_category_id")
+  @@index([variant_id], map: "index_spree_line_items_on_variant_id")
+}
+
+model spree_log_entries {
+  id          Int      @id @default(autoincrement())
+  source_id   Int?
+  source_type String?  @db.VarChar
+  details     String?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+
+  @@index([source_id, source_type], map: "index_spree_log_entries_on_source_id_and_source_type")
+}
+
+model spree_maker_processes {
+  id          Int      @id @default(autoincrement())
+  name        String?  @db.VarChar
+  description String?
+  position    Int      @default(0)
+  active      Boolean  @default(false)
+  maker_id    Int?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_maker_processes_on_position")
+}
+
+model spree_maker_variants {
+  id         Int      @id @default(autoincrement())
+  maker_id   Int?
+  variant_id Int?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model spree_makers {
+  id               Int      @id @default(autoincrement())
+  name             String?  @db.VarChar
+  title            String?  @db.VarChar
+  position         Int      @default(0)
+  featured         Boolean  @default(false)
+  description      String?
+  video_snippet    String?
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @db.Timestamp(6)
+  slug             String?  @db.VarChar
+  meta_title       String?  @db.VarChar
+  meta_description String?
+  seo_nofollow     Boolean  @default(false)
+  seo_noindex      Boolean  @default(false)
+
+  @@index([position], map: "index_spree_makers_on_position")
+}
+
+model spree_material_properties {
+  id          Int       @id @default(autoincrement())
+  value       String?   @db.VarChar
+  material_id Int?
+  property_id Int?
+  created_at  DateTime? @db.Timestamp(6)
+  updated_at  DateTime? @db.Timestamp(6)
+
+  @@index([material_id], map: "index_spree_material_properties_on_material_id")
+  @@index([property_id], map: "index_spree_material_properties_on_property_id")
+}
+
+model spree_material_variants {
+  id          Int      @id @default(autoincrement())
+  material_id Int?
+  variant_id  Int?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+}
+
+model spree_materials {
+  id                        Int       @id @default(autoincrement())
+  core_resource_id          Int?
+  name                      String?   @db.VarChar
+  sku                       String?   @db.VarChar
+  is_fabric                 Boolean   @default(false)
+  allow_order               Boolean   @default(false)
+  collection                String?   @db.VarChar
+  parent_material           String?   @db.VarChar
+  description               String?
+  brosa_created_at          DateTime? @db.Timestamp(6)
+  brosa_updated_at          DateTime? @db.Timestamp(6)
+  created_at                DateTime? @db.Timestamp(6)
+  updated_at                DateTime? @db.Timestamp(6)
+  position                  Int       @default(0)
+  featured                  Boolean   @default(false)
+  banner_image_file_name    String?   @db.VarChar
+  banner_image_content_type String?   @db.VarChar
+  banner_image_file_size    Int?
+  banner_image_updated_at   DateTime? @db.Timestamp(6)
+  category_title            String?   @db.VarChar
+  category_link             String?   @db.VarChar
+  slug                      String?   @db.VarChar
+  type                      String?   @db.VarChar
+  meta_title                String?   @db.VarChar
+  meta_description          String?
+  seo_nofollow              Boolean   @default(false)
+  seo_noindex               Boolean   @default(false)
+
+  @@index([core_resource_id], map: "index_spree_materials_on_core_resource_id")
+}
+
+model spree_menu_list_headings {
+  id            Int      @id @default(autoincrement())
+  name          String?  @db.VarChar
+  column_number Int?
+  menu_list_id  Int?
+  created_at    DateTime @db.Timestamp(6)
+  updated_at    DateTime @db.Timestamp(6)
+
+  @@index([column_number], map: "index_spree_menu_list_headings_on_column_number")
+  @@index([menu_list_id], map: "index_spree_menu_list_headings_on_menu_list_id")
+}
+
+model spree_menu_list_items {
+  id                   Int       @id @default(autoincrement())
+  name                 String?   @db.VarChar
+  url                  String?   @db.VarChar
+  menu_list_id         Int?
+  navigation_item_id   Int?
+  position             Int?
+  active               Boolean   @default(false)
+  created_at           DateTime  @db.Timestamp(6)
+  updated_at           DateTime  @db.Timestamp(6)
+  product_id           Int?
+  taxon_id             Int?
+  menu_list_heading_id Int?
+  css_class            String?   @db.VarChar
+  publish_at           DateTime? @db.Timestamp(6)
+  unpublish_at         DateTime? @db.Timestamp(6)
+
+  @@index([menu_list_heading_id], map: "index_spree_menu_list_items_on_menu_list_heading_id")
+  @@index([menu_list_id], map: "index_spree_menu_list_items_on_menu_list_id")
+  @@index([navigation_item_id], map: "index_spree_menu_list_items_on_navigation_item_id")
+  @@index([position], map: "index_spree_menu_list_items_on_position")
+  @@index([product_id], map: "index_spree_menu_list_items_on_product_id")
+  @@index([taxon_id], map: "index_spree_menu_list_items_on_taxon_id")
+}
+
+model spree_menu_lists {
+  id                 Int       @id @default(autoincrement())
+  name               String?   @db.VarChar
+  navigation_item_id Int?
+  active             Boolean   @default(false)
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+  url                String?   @db.VarChar
+  column_number      Int?
+  column_width       Int?
+  type               String?   @db.VarChar
+  publish_at         DateTime? @db.Timestamp(6)
+  unpublish_at       DateTime? @db.Timestamp(6)
+
+  @@index([navigation_item_id], map: "index_spree_menu_lists_on_navigation_item_id")
+}
+
+model spree_navigation_items {
+  id            Int      @id @default(autoincrement())
+  name          String?  @db.VarChar
+  css_class     String?  @db.VarChar
+  active        Boolean  @default(false)
+  url           String?  @db.VarChar
+  navigation_id Int?
+  position      Int?
+  created_at    DateTime @db.Timestamp(6)
+  updated_at    DateTime @db.Timestamp(6)
+  product_id    Int?
+  taxon_id      Int?
+
+  @@index([navigation_id], map: "index_spree_navigation_items_on_navigation_id")
+  @@index([position], map: "index_spree_navigation_items_on_position")
+  @@index([product_id], map: "index_spree_navigation_items_on_product_id")
+  @@index([taxon_id], map: "index_spree_navigation_items_on_taxon_id")
+}
+
+model spree_navigation_links {
+  id         Int       @id @default(autoincrement())
+  url        String?   @db.VarChar
+  title      String?   @db.VarChar
+  active     Boolean   @default(false)
+  position   Int
+  taxon_id   Int?
+  created_at DateTime  @db.Timestamp(6)
+  updated_at DateTime  @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_navigation_links_on_deleted_at")
+  @@index([position], map: "index_spree_navigation_links_on_position")
+  @@index([taxon_id], map: "index_spree_navigation_links_on_taxon_id")
+}
+
+model spree_navigations {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  location   Int
+  active     Boolean  @default(false)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model spree_oauth_access_grants {
+  id                       BigInt                   @id @default(autoincrement())
+  resource_owner_id        Int
+  application_id           BigInt
+  token                    String                   @unique(map: "index_spree_oauth_access_grants_on_token") @db.VarChar
+  expires_in               Int
+  redirect_uri             String
+  created_at               DateTime                 @db.Timestamp(6)
+  revoked_at               DateTime?                @db.Timestamp(6)
+  scopes                   String?                  @db.VarChar
+  spree_oauth_applications spree_oauth_applications @relation(fields: [application_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_8049be136c")
+
+  @@index([application_id], map: "index_spree_oauth_access_grants_on_application_id")
+}
+
+model spree_oauth_access_tokens {
+  id                       BigInt                    @id @default(autoincrement())
+  resource_owner_id        Int?
+  application_id           BigInt?
+  token                    String                    @unique(map: "index_spree_oauth_access_tokens_on_token") @db.VarChar
+  refresh_token            String?                   @unique(map: "index_spree_oauth_access_tokens_on_refresh_token") @db.VarChar
+  expires_in               Int?
+  revoked_at               DateTime?                 @db.Timestamp(6)
+  created_at               DateTime                  @db.Timestamp(6)
+  scopes                   String?                   @db.VarChar
+  previous_refresh_token   String                    @default("") @db.VarChar
+  spree_oauth_applications spree_oauth_applications? @relation(fields: [application_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_c9894c7021")
+
+  @@index([application_id], map: "index_spree_oauth_access_tokens_on_application_id")
+  @@index([resource_owner_id], map: "index_spree_oauth_access_tokens_on_resource_owner_id")
+}
+
+model spree_oauth_applications {
+  id                        BigInt                      @id @default(autoincrement())
+  name                      String                      @db.VarChar
+  uid                       String                      @unique(map: "index_spree_oauth_applications_on_uid") @db.VarChar
+  secret                    String                      @db.VarChar
+  redirect_uri              String
+  scopes                    String                      @default("") @db.VarChar
+  confidential              Boolean                     @default(true)
+  created_at                DateTime                    @db.Timestamp(6)
+  updated_at                DateTime                    @db.Timestamp(6)
+  spree_oauth_access_grants spree_oauth_access_grants[]
+  spree_oauth_access_tokens spree_oauth_access_tokens[]
+}
+
+model spree_option_type_prototypes {
+  prototype_id   Int?
+  option_type_id Int?
+  id             Int  @id @default(autoincrement())
+
+  @@unique([prototype_id, option_type_id], map: "spree_option_type_prototypes_prototype_id_option_type_id")
+  @@index([option_type_id], map: "index_spree_option_type_prototypes_on_option_type_id")
+  @@index([prototype_id], map: "index_spree_option_type_prototypes_on_prototype_id")
+}
+
+model spree_option_types {
+  id               Int       @id @default(autoincrement())
+  name             String?   @db.VarChar(100)
+  presentation     String?   @db.VarChar(100)
+  position         Int       @default(0)
+  created_at       DateTime  @db.Timestamp(6)
+  updated_at       DateTime  @db.Timestamp(6)
+  core_resource_id Int?      @default(0)
+  brosa_created_at DateTime? @db.Timestamp(6)
+  brosa_updated_at DateTime? @db.Timestamp(6)
+  uid              String?   @db.VarChar
+  component_id     Int?
+  property_id      Int?
+
+  @@index([name], map: "index_spree_option_types_on_name")
+  @@index([position], map: "index_spree_option_types_on_position")
+}
+
+model spree_option_value_materials {
+  id              Int  @id @default(autoincrement())
+  option_value_id Int?
+  material_id     Int?
+
+  @@index([material_id], map: "index_spree_option_value_materials_on_material_id")
+  @@index([option_value_id], map: "index_spree_option_value_materials_on_option_value_id")
+}
+
+model spree_option_value_variants {
+  variant_id      Int?
+  option_value_id Int?
+  id              Int  @id @default(autoincrement())
+
+  @@unique([variant_id, option_value_id], map: "index_option_values_variants_on_variant_id_and_option_value_id")
+  @@index([option_value_id, variant_id], map: "index_option_value_variants_on_option_value_and_variant")
+  @@index([option_value_id], map: "index_spree_option_value_variants_on_option_value_id")
+  @@index([variant_id], map: "index_spree_option_value_variants_on_variant_id")
+}
+
+model spree_option_values {
+  id                   Int       @id @default(autoincrement())
+  position             Int?
+  name                 String?   @db.VarChar
+  presentation         String?   @db.VarChar
+  option_type_id       Int?
+  created_at           DateTime  @db.Timestamp(6)
+  updated_at           DateTime  @db.Timestamp(6)
+  image_file_name      String?   @db.VarChar
+  image_content_type   String?   @db.VarChar
+  image_file_size      Int?
+  image_updated_at     DateTime? @db.Timestamp(6)
+  core_resource_id     Int?      @default(0)
+  brosa_created_at     DateTime? @db.Timestamp(6)
+  brosa_updated_at     DateTime? @db.Timestamp(6)
+  uid                  String?   @db.VarChar
+  image_processing     Boolean?
+  media_id             Int?
+  cloudinary_image_url String?   @db.VarChar
+
+  @@index([name], map: "index_spree_option_values_on_name")
+  @@index([option_type_id], map: "index_spree_option_values_on_option_type_id")
+  @@index([position], map: "index_spree_option_values_on_position")
+}
+
+model spree_order_promotions {
+  order_id     Int?
+  promotion_id Int?
+  id           Int  @id @default(autoincrement())
+
+  @@index([order_id], map: "index_spree_order_promotions_on_order_id")
+  @@index([promotion_id], map: "index_spree_order_promotions_on_promotion_id")
+  @@index([promotion_id, order_id], map: "index_spree_order_promotions_on_promotion_id_and_order_id")
+}
+
+model spree_orders {
+  id                           Int       @id @default(autoincrement())
+  number                       String?   @unique(map: "index_spree_orders_on_number") @db.VarChar(32)
+  item_total                   Decimal   @default(0.0) @db.Decimal(10, 2)
+  total                        Decimal   @default(0.0) @db.Decimal(10, 2)
+  state                        String?   @db.VarChar
+  adjustment_total             Decimal   @default(0.0) @db.Decimal(10, 2)
+  user_id                      Int?
+  completed_at                 DateTime? @db.Timestamp(6)
+  bill_address_id              Int?
+  ship_address_id              Int?
+  payment_total                Decimal?  @default(0.0) @db.Decimal(10, 2)
+  shipment_state               String?   @db.VarChar
+  payment_state                String?   @db.VarChar
+  email                        String?   @db.VarChar
+  special_instructions         String?
+  created_at                   DateTime  @db.Timestamp(6)
+  updated_at                   DateTime  @db.Timestamp(6)
+  currency                     String?   @db.VarChar
+  last_ip_address              String?   @db.VarChar
+  created_by_id                Int?
+  shipment_total               Decimal   @default(0.0) @db.Decimal(10, 2)
+  additional_tax_total         Decimal?  @default(0.0) @db.Decimal(10, 2)
+  promo_total                  Decimal?  @default(0.0) @db.Decimal(10, 2)
+  channel                      String?   @default("spree") @db.VarChar
+  included_tax_total           Decimal   @default(0.0) @db.Decimal(10, 2)
+  item_count                   Int?      @default(0)
+  approver_id                  Int?
+  approved_at                  DateTime? @db.Timestamp(6)
+  confirmation_delivered       Boolean?  @default(false)
+  considered_risky             Boolean?  @default(false)
+  token                        String?   @db.VarChar
+  canceled_at                  DateTime? @db.Timestamp(6)
+  canceler_id                  Int?
+  store_id                     Int?
+  state_lock_version           Int       @default(0)
+  taxable_adjustment_total     Decimal   @default(0.0) @db.Decimal(10, 2)
+  non_taxable_adjustment_total Decimal   @default(0.0) @db.Decimal(10, 2)
+  affiliate_id                 Int?
+  added_to_core                Boolean?
+  purchase_protection_total    Decimal?  @default(0.0) @db.Decimal(8, 2)
+  express_checkout             Boolean   @default(false)
+  express_checkout_for         String?   @default("") @db.VarChar
+  next_day_delivery            Boolean   @default(false)
+
+  @@index([affiliate_id], map: "index_spree_orders_on_affiliate_id")
+  @@index([approver_id], map: "index_spree_orders_on_approver_id")
+  @@index([bill_address_id], map: "index_spree_orders_on_bill_address_id")
+  @@index([canceler_id], map: "index_spree_orders_on_canceler_id")
+  @@index([completed_at], map: "index_spree_orders_on_completed_at")
+  @@index([confirmation_delivered], map: "index_spree_orders_on_confirmation_delivered")
+  @@index([considered_risky], map: "index_spree_orders_on_considered_risky")
+  @@index([created_by_id], map: "index_spree_orders_on_created_by_id")
+  @@index([ship_address_id], map: "index_spree_orders_on_ship_address_id")
+  @@index([store_id], map: "index_spree_orders_on_store_id")
+  @@index([token], map: "index_spree_orders_on_token")
+  @@index([user_id, created_by_id], map: "index_spree_orders_on_user_id_and_created_by_id")
+}
+
+model spree_pages {
+  id                       Int      @id @default(autoincrement())
+  title                    String?  @db.VarChar
+  body                     String?
+  slug                     String?  @db.VarChar
+  created_at               DateTime @db.Timestamp(6)
+  updated_at               DateTime @db.Timestamp(6)
+  show_in_header           Boolean  @default(false)
+  foreign_link             String?  @db.VarChar
+  position                 Int      @default(1)
+  visible                  Boolean  @default(false)
+  meta_description         String?  @db.VarChar
+  layout                   String?  @db.VarChar
+  show_in_sidebar          Boolean  @default(false)
+  meta_title               String?  @db.VarChar
+  render_layout_as_partial Boolean? @default(false)
+  og_image_url             String?  @db.VarChar
+  og_title                 String?  @db.VarChar
+  og_description           String?  @db.VarChar
+  og_url                   String?  @db.VarChar
+  category_module_enabled  Boolean  @default(false)
+  show_in_footer           Boolean  @default(false)
+
+  @@index([slug], map: "index_spree_pages_on_slug")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model spree_pages_stores {
+  store_id   Int?
+  page_id    Int?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([page_id], map: "index_spree_pages_stores_on_page_id")
+  @@index([store_id], map: "index_spree_pages_stores_on_store_id")
+  @@ignore
+}
+
+model spree_payment_capture_events {
+  id         Int      @id @default(autoincrement())
+  amount     Decimal? @default(0.0) @db.Decimal(10, 2)
+  payment_id Int?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([payment_id], map: "index_spree_payment_capture_events_on_payment_id")
+}
+
+model spree_payment_methods {
+  id           Int       @id @default(autoincrement())
+  type         String?   @db.VarChar
+  name         String?   @db.VarChar
+  description  String?
+  active       Boolean?  @default(true)
+  deleted_at   DateTime? @db.Timestamp(6)
+  created_at   DateTime  @db.Timestamp(6)
+  updated_at   DateTime  @db.Timestamp(6)
+  display_on   String?   @default("both") @db.VarChar
+  auto_capture Boolean?
+  preferences  String?
+  position     Int?      @default(0)
+
+  @@index([id, type], map: "index_spree_payment_methods_on_id_and_type")
+}
+
+model spree_payments {
+  id                   Int      @id @default(autoincrement())
+  amount               Decimal  @default(0.0) @db.Decimal(10, 2)
+  order_id             Int?
+  source_id            Int?
+  source_type          String?  @db.VarChar
+  payment_method_id    Int?
+  state                String?  @db.VarChar
+  response_code        String?  @db.VarChar
+  avs_response         String?  @db.VarChar
+  created_at           DateTime @db.Timestamp(6)
+  updated_at           DateTime @db.Timestamp(6)
+  number               String?  @unique(map: "unique_index_spree_payments_on_number") @db.VarChar
+  cvv_response_code    String?  @db.VarChar
+  cvv_response_message String?  @db.VarChar
+  classification       Int?     @default(0)
+
+  @@index([number], map: "index_spree_payments_on_number")
+  @@index([order_id], map: "index_spree_payments_on_order_id")
+  @@index([payment_method_id], map: "index_spree_payments_on_payment_method_id")
+  @@index([source_id, source_type], map: "index_spree_payments_on_source_id_and_source_type")
+}
+
+model spree_permission_sets {
+  id                 Int       @id @default(autoincrement())
+  name               String    @db.VarChar
+  created_at         DateTime? @db.Timestamp(6)
+  updated_at         DateTime? @db.Timestamp(6)
+  description        String?   @default("") @db.VarChar
+  display_permission Boolean?  @default(false)
+}
+
+model spree_permissions {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar
+  priority    Int?     @default(0)
+  visible     Boolean? @default(true)
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+  description String?  @default("") @db.VarChar
+
+  @@index([visible], map: "index_spree_permissions_on_visible")
+}
+
+model spree_permissions_permission_sets {
+  id                Int  @id @default(autoincrement())
+  permission_id     Int?
+  permission_set_id Int?
+
+  @@index([permission_id], map: "index_spree_permissions_permission_sets_on_permission_id")
+  @@index([permission_set_id], map: "index_spree_permissions_permission_sets_on_permission_set_id")
+}
+
+model spree_preferences {
+  id         Int      @id @default(autoincrement())
+  value      String?
+  key        String?  @unique(map: "index_spree_preferences_on_key") @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model spree_prices {
+  id         Int       @id @default(autoincrement())
+  variant_id Int
+  amount     Decimal?  @db.Decimal(10, 2)
+  currency   String?   @db.VarChar
+  deleted_at DateTime? @db.Timestamp(6)
+  created_at DateTime  @db.Timestamp(6)
+  updated_at DateTime  @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_prices_on_deleted_at")
+  @@index([variant_id], map: "index_spree_prices_on_variant_id")
+  @@index([variant_id, currency], map: "index_spree_prices_on_variant_id_and_currency")
+}
+
+model spree_product_descriptions {
+  id                 Int       @id @default(autoincrement())
+  product_id         Int?
+  title              String?   @db.VarChar
+  content            String?
+  position           Int?
+  deleted_at         DateTime? @db.Timestamp(6)
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+  attachment_snippet String?   @default("")
+
+  @@index([product_id], map: "index_spree_product_descriptions_on_product_id")
+}
+
+model spree_product_details {
+  id                            Int       @id @default(autoincrement())
+  product_id                    Int?
+  availability                  String?   @default("")
+  colour                        String?   @default("")
+  frame_type                    String?   @default("")
+  upholstery                    String?   @default("")
+  variant_price                 String?   @default("")
+  art_colour                    String?   @default("")
+  art_style                     String?   @default("")
+  bedding_print                 String?   @default("")
+  rug_style                     String?   @default("")
+  style                         String?   @default("")
+  product_type                  String?   @default("")
+  depth                         String?   @default("")
+  height                        String?   @default("")
+  width                         String?   @default("")
+  on_sale                       String?   @default("")
+  sale_price                    String?   @default("")
+  softness_level                String?   @default("")
+  variant_sku                   String?   @default("")
+  created_at                    DateTime? @db.Timestamp(6)
+  updated_at                    DateTime? @db.Timestamp(6)
+  parent_colour                 String?
+  variant_colour                String?
+  fabric_constituency           String?
+  fabric_collection             String?
+  fabric_collection_description String?
+  is_wall_art                   Boolean?
+  bar_cabinet_size              String?
+  bar_stool_height              String?
+  bar_stool_backrest            String?
+  dining_table_shape            String?
+  dining_table_length           String?
+  seating_capacity              String?
+  dining_chair_material         String?
+  sideboard_length              String?
+  leg_colour                    String?
+  bed_size                      String?
+  tv_size                       String?
+  coffee_table_shape            String?
+  coffee_table_length           String?
+  storage                       String?
+  number_of_shelves             String?
+  storage_type                  String?
+  number_of_drawers             String?
+  top_material                  String?
+  swatch_colour                 String?
+  material_filter               String?
+
+  @@index([product_id], map: "index_spree_product_details_on_product_id")
+}
+
+model spree_product_faqs {
+  id         Int      @id @default(autoincrement())
+  answer     String?  @db.VarChar
+  product_id Int?
+  faq_id     Int?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([faq_id], map: "index_spree_product_faqs_on_faq_id")
+  @@index([product_id], map: "index_spree_product_faqs_on_product_id")
+}
+
+model spree_product_materials {
+  id                 Int      @id @default(autoincrement())
+  position           Int?
+  material_id        Int?
+  material_type_text String?  @db.VarChar
+  product_id         Int?
+  external           Boolean  @default(true)
+  image_url          String?  @db.VarChar
+  display_name       String?  @db.VarChar
+  page_url           String?  @db.VarChar
+  created_at         DateTime @db.Timestamp(6)
+  updated_at         DateTime @db.Timestamp(6)
+
+  @@index([external], map: "index_spree_product_materials_on_external")
+  @@index([material_id], map: "index_spree_product_materials_on_material_id")
+  @@index([product_id], map: "index_spree_product_materials_on_product_id")
+}
+
+model spree_product_option_types {
+  id             Int      @id @default(autoincrement())
+  position       Int?
+  product_id     Int?
+  option_type_id Int?
+  created_at     DateTime @db.Timestamp(6)
+  updated_at     DateTime @db.Timestamp(6)
+  presentation   String?  @db.VarChar
+
+  @@index([option_type_id], map: "index_spree_product_option_types_on_option_type_id")
+  @@index([position], map: "index_spree_product_option_types_on_position")
+  @@index([product_id], map: "index_spree_product_option_types_on_product_id")
+}
+
+model spree_product_promotion_rules {
+  product_id        Int?
+  promotion_rule_id Int?
+  id                Int  @id @default(autoincrement())
+
+  @@index([promotion_rule_id, product_id], map: "index_product_promotion_rules_on_promotion_rule_and_product")
+  @@index([product_id], map: "index_products_promotion_rules_on_product_id")
+  @@index([promotion_rule_id, product_id], map: "index_products_promotion_rules_on_promotion_rule_and_product")
+}
+
+model spree_product_properties {
+  id          Int      @id @default(autoincrement())
+  value       String?  @db.VarChar
+  product_id  Int?
+  property_id Int?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+  position    Int?     @default(0)
+
+  @@index([product_id], map: "index_product_properties_on_product_id")
+  @@index([position], map: "index_spree_product_properties_on_position")
+  @@index([property_id], map: "index_spree_product_properties_on_property_id")
+}
+
+model spree_product_softness_levels {
+  id                BigInt   @id @default(autoincrement())
+  product_id        BigInt?
+  softness_level_id BigInt?
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @db.Timestamp(6)
+
+  @@index([product_id], map: "index_spree_product_softness_levels_on_product_id")
+  @@index([softness_level_id], map: "index_spree_product_softness_levels_on_softness_level_id")
+}
+
+model spree_products {
+  id                               Int       @id @default(autoincrement())
+  name                             String    @default("") @db.VarChar
+  description                      String?
+  available_on                     DateTime? @db.Timestamp(6)
+  deleted_at                       DateTime? @db.Timestamp(6)
+  slug                             String?   @unique(map: "index_spree_products_on_slug") @db.VarChar
+  meta_description                 String?
+  meta_keywords                    String?   @db.VarChar
+  tax_category_id                  Int?
+  shipping_category_id             Int?
+  created_at                       DateTime  @db.Timestamp(6)
+  updated_at                       DateTime  @db.Timestamp(6)
+  promotionable                    Boolean?  @default(true)
+  meta_title                       String?   @db.VarChar
+  discontinue_on                   DateTime? @db.Timestamp(6)
+  avg_rating                       Decimal   @default(0.0) @db.Decimal(7, 5)
+  reviews_count                    Int       @default(0)
+  default_relation_type_name       String?   @db.VarChar
+  seo_nofollow                     Boolean?  @default(false)
+  seo_noindex                      Boolean?  @default(false)
+  fabric                           Boolean?  @default(false)
+  featured                         Boolean   @default(false)
+  revenue                          Decimal?  @default(0) @db.Decimal(12, 2)
+  is_gift_card                     Boolean   @default(false)
+  is_limited_release               Boolean   @default(false)
+  brosa_created_at                 DateTime? @db.Timestamp(6)
+  brosa_updated_at                 DateTime? @db.Timestamp(6)
+  core_resource_id                 Int?
+  is_visible                       Boolean?  @default(false)
+  allow_order                      Boolean?  @default(false)
+  og_image_url                     String?   @db.VarChar
+  og_title                         String?   @db.VarChar
+  og_description                   String?   @db.VarChar
+  og_url                           String?   @db.VarChar
+  show_product_static_details      Boolean?  @default(true)
+  show_product_relevant_collection Boolean?  @default(true)
+  show_product_descriptions        Boolean?  @default(true)
+  show_product_properties          Boolean?  @default(true)
+  show_product_availability        Boolean?  @default(true)
+  show_product_faqs                Boolean?  @default(true)
+  show_product_feedbacks           Boolean?  @default(true)
+  show_product_how_borsa_works     Boolean?  @default(true)
+  show_product_crafted_with        Boolean?  @default(true)
+  show_product_fabric_softness     Boolean?  @default(true)
+  show_product_quality_materials   Boolean?  @default(true)
+  show_product_related_categories  Boolean?  @default(true)
+  show_product_ugc_section         Boolean?  @default(true)
+  show_tabs                        Boolean   @default(false)
+  timber                           Boolean?  @default(false)
+  swatch_view                      Boolean   @default(true)
+  is_care_cover                    Boolean   @default(false)
+
+  @@index([available_on], map: "index_spree_products_on_available_on")
+  @@index([deleted_at], map: "index_spree_products_on_deleted_at")
+  @@index([discontinue_on], map: "index_spree_products_on_discontinue_on")
+  @@index([name], map: "index_spree_products_on_name")
+  @@index([shipping_category_id], map: "index_spree_products_on_shipping_category_id")
+  @@index([tax_category_id], map: "index_spree_products_on_tax_category_id")
+}
+
+model spree_products_taxons {
+  product_id Int?
+  taxon_id   Int?
+  id         Int       @id @default(autoincrement())
+  position   Int?
+  master     Boolean   @default(false)
+  deleted_at DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_products_taxons_on_deleted_at")
+  @@index([position], map: "index_spree_products_taxons_on_position")
+  @@index([product_id], map: "index_spree_products_taxons_on_product_id")
+  @@index([taxon_id], map: "index_spree_products_taxons_on_taxon_id")
+}
+
+model spree_promotion_action_line_items {
+  id                  Int  @id @default(autoincrement())
+  promotion_action_id Int?
+  variant_id          Int?
+  quantity            Int? @default(1)
+
+  @@index([promotion_action_id], map: "index_spree_promotion_action_line_items_on_promotion_action_id")
+  @@index([variant_id], map: "index_spree_promotion_action_line_items_on_variant_id")
+}
+
+model spree_promotion_action_products {
+  id                  Int      @id @default(autoincrement())
+  promotion_action_id Int?
+  product_id          Int?
+  created_at          DateTime @db.Timestamp(6)
+  updated_at          DateTime @db.Timestamp(6)
+
+  @@index([product_id], map: "index_spree_promotion_action_products_on_product_id")
+  @@index([promotion_action_id], map: "index_spree_promotion_action_products_on_promotion_action_id")
+}
+
+model spree_promotion_action_taxons {
+  id                  Int      @id @default(autoincrement())
+  promotion_action_id Int?
+  taxon_id            Int?
+  created_at          DateTime @db.Timestamp(6)
+  updated_at          DateTime @db.Timestamp(6)
+
+  @@index([promotion_action_id], map: "index_spree_promotion_action_taxons_on_promotion_action_id")
+  @@index([taxon_id], map: "index_spree_promotion_action_taxons_on_taxon_id")
+}
+
+model spree_promotion_actions {
+  id           Int       @id @default(autoincrement())
+  promotion_id Int?
+  position     Int?
+  type         String?   @db.VarChar
+  deleted_at   DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_promotion_actions_on_deleted_at")
+  @@index([id, type], map: "index_spree_promotion_actions_on_id_and_type")
+  @@index([promotion_id], map: "index_spree_promotion_actions_on_promotion_id")
+}
+
+model spree_promotion_advertisements {
+  id            BigInt   @id @default(autoincrement())
+  name          String?  @db.VarChar
+  location_page Int
+  active        Boolean  @default(false)
+  created_at    DateTime @db.Timestamp(6)
+  updated_at    DateTime @db.Timestamp(6)
+}
+
+model spree_promotion_categories {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+  code       String?  @db.VarChar
+}
+
+model spree_promotion_rule_taxons {
+  id                Int  @id @default(autoincrement())
+  taxon_id          Int?
+  promotion_rule_id Int?
+
+  @@index([promotion_rule_id], map: "index_spree_promotion_rule_taxons_on_promotion_rule_id")
+  @@index([taxon_id], map: "index_spree_promotion_rule_taxons_on_taxon_id")
+}
+
+model spree_promotion_rule_users {
+  user_id           Int?
+  promotion_rule_id Int?
+  id                Int  @id @default(autoincrement())
+
+  @@index([user_id, promotion_rule_id], map: "index_promotion_rule_users_on_user_id_and_promotion_rule_id")
+  @@index([promotion_rule_id], map: "index_promotion_rules_users_on_promotion_rule_id")
+  @@index([user_id, promotion_rule_id], map: "index_promotion_rules_users_on_user_id_and_promotion_rule_id")
+}
+
+model spree_promotion_rules {
+  id               Int      @id @default(autoincrement())
+  promotion_id     Int?
+  user_id          Int?
+  product_group_id Int?
+  type             String?  @db.VarChar
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @db.Timestamp(6)
+  code             String?  @db.VarChar
+  preferences      String?
+
+  @@index([product_group_id], map: "index_promotion_rules_on_product_group_id")
+  @@index([user_id], map: "index_promotion_rules_on_user_id")
+  @@index([promotion_id], map: "index_spree_promotion_rules_on_promotion_id")
+}
+
+model spree_promotions {
+  id                            Int       @id @default(autoincrement())
+  description                   String?   @db.VarChar
+  expires_at                    DateTime? @db.Timestamp(6)
+  starts_at                     DateTime? @db.Timestamp(6)
+  name                          String?   @db.VarChar
+  type                          String?   @db.VarChar
+  usage_limit                   Int?
+  match_policy                  String?   @default("all") @db.VarChar
+  code                          String?   @db.VarChar
+  advertise                     Boolean?  @default(false)
+  path                          String?   @db.VarChar
+  created_at                    DateTime  @db.Timestamp(6)
+  updated_at                    DateTime  @db.Timestamp(6)
+  promotion_category_id         Int?
+  current_usage                 Int       @default(0)
+  apply_during_express_checkout Boolean   @default(false)
+
+  @@index([advertise], map: "index_spree_promotions_on_advertise")
+  @@index([code], map: "index_spree_promotions_on_code")
+  @@index([expires_at], map: "index_spree_promotions_on_expires_at")
+  @@index([id, type], map: "index_spree_promotions_on_id_and_type")
+  @@index([promotion_category_id], map: "index_spree_promotions_on_promotion_category_id")
+  @@index([starts_at], map: "index_spree_promotions_on_starts_at")
+}
+
+model spree_properties {
+  id               Int       @id @default(autoincrement())
+  name             String?   @db.VarChar
+  presentation     String    @db.VarChar
+  created_at       DateTime  @db.Timestamp(6)
+  updated_at       DateTime  @db.Timestamp(6)
+  core_resource_id Int?      @default(0)
+  brosa_created_at DateTime? @db.Timestamp(6)
+  brosa_updated_at DateTime? @db.Timestamp(6)
+  position         Int?
+
+  @@index([name], map: "index_spree_properties_on_name")
+}
+
+model spree_property_prototypes {
+  prototype_id Int?
+  property_id  Int?
+  id           Int  @id @default(autoincrement())
+
+  @@unique([prototype_id, property_id], map: "index_property_prototypes_on_prototype_id_and_property_id")
+  @@index([property_id], map: "index_spree_property_prototypes_on_property_id")
+  @@index([prototype_id], map: "index_spree_property_prototypes_on_prototype_id")
+}
+
+model spree_prototype_taxons {
+  id           Int  @id @default(autoincrement())
+  taxon_id     Int?
+  prototype_id Int?
+
+  @@index([prototype_id], map: "index_spree_prototype_taxons_on_prototype_id")
+  @@index([prototype_id, taxon_id], map: "index_spree_prototype_taxons_on_prototype_id_and_taxon_id")
+  @@index([taxon_id], map: "index_spree_prototype_taxons_on_taxon_id")
+}
+
+model spree_prototypes {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model spree_referrals {
+  id      Int     @id @default(autoincrement())
+  code    String? @db.VarChar
+  user_id Int?
+
+  @@index([user_id], map: "index_spree_referrals_on_user_id")
+}
+
+model spree_referred_records {
+  id           Int  @id @default(autoincrement())
+  user_id      Int?
+  referral_id  Int?
+  affiliate_id Int?
+
+  @@index([user_id, referral_id, affiliate_id], map: "index_spree_referred_record_on_u_r_a")
+}
+
+model spree_refund_reasons {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  active     Boolean? @default(true)
+  mutable    Boolean? @default(true)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model spree_refunds {
+  id               Int      @id @default(autoincrement())
+  payment_id       Int?
+  amount           Decimal  @default(0.0) @db.Decimal(10, 2)
+  transaction_id   String?  @db.VarChar
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @db.Timestamp(6)
+  refund_reason_id Int?
+  reimbursement_id Int?
+
+  @@index([refund_reason_id], map: "index_refunds_on_refund_reason_id")
+  @@index([payment_id], map: "index_spree_refunds_on_payment_id")
+  @@index([reimbursement_id], map: "index_spree_refunds_on_reimbursement_id")
+}
+
+model spree_reimbursement_credits {
+  id               Int     @id @default(autoincrement())
+  amount           Decimal @default(0.0) @db.Decimal(10, 2)
+  reimbursement_id Int?
+  creditable_id    Int?
+  creditable_type  String? @db.VarChar
+
+  @@index([creditable_id, creditable_type], map: "index_reimbursement_credits_on_creditable_id_and_type")
+  @@index([reimbursement_id], map: "index_spree_reimbursement_credits_on_reimbursement_id")
+}
+
+model spree_reimbursement_types {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  active     Boolean? @default(true)
+  mutable    Boolean? @default(true)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+  type       String?  @db.VarChar
+
+  @@index([type], map: "index_spree_reimbursement_types_on_type")
+}
+
+model spree_reimbursements {
+  id                   Int      @id @default(autoincrement())
+  number               String?  @unique(map: "index_spree_reimbursements_on_number") @db.VarChar
+  reimbursement_status String?  @db.VarChar
+  customer_return_id   Int?
+  order_id             Int?
+  total                Decimal? @db.Decimal(10, 2)
+  created_at           DateTime @db.Timestamp(6)
+  updated_at           DateTime @db.Timestamp(6)
+
+  @@index([customer_return_id], map: "index_spree_reimbursements_on_customer_return_id")
+  @@index([order_id], map: "index_spree_reimbursements_on_order_id")
+}
+
+model spree_related_search_items {
+  id         Int       @id @default(autoincrement())
+  taxon_id   Int?
+  name       String?   @db.VarChar
+  url        String?   @db.VarChar
+  active     Boolean   @default(false)
+  position   Int
+  created_at DateTime  @db.Timestamp(6)
+  updated_at DateTime  @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_related_search_items_on_deleted_at")
+  @@index([position], map: "index_spree_related_search_items_on_position")
+  @@index([taxon_id], map: "index_spree_related_search_items_on_taxon_id")
+}
+
+model spree_return_authorization_reasons {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  active     Boolean? @default(true)
+  mutable    Boolean? @default(true)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model spree_return_authorizations {
+  id                             Int       @id @default(autoincrement())
+  number                         String?   @unique(map: "index_spree_return_authorizations_on_number") @db.VarChar
+  state                          String?   @db.VarChar
+  order_id                       Int?
+  memo                           String?
+  created_at                     DateTime? @db.Timestamp(6)
+  updated_at                     DateTime? @db.Timestamp(6)
+  stock_location_id              Int?
+  return_authorization_reason_id Int?
+
+  @@index([return_authorization_reason_id], map: "index_return_authorizations_on_return_authorization_reason_id")
+  @@index([order_id], map: "index_spree_return_authorizations_on_order_id")
+  @@index([stock_location_id], map: "index_spree_return_authorizations_on_stock_location_id")
+}
+
+model spree_return_items {
+  id                              Int      @id @default(autoincrement())
+  return_authorization_id         Int?
+  inventory_unit_id               Int?
+  exchange_variant_id             Int?
+  created_at                      DateTime @db.Timestamp(6)
+  updated_at                      DateTime @db.Timestamp(6)
+  pre_tax_amount                  Decimal  @default(0.0) @db.Decimal(12, 4)
+  included_tax_total              Decimal  @default(0.0) @db.Decimal(12, 4)
+  additional_tax_total            Decimal  @default(0.0) @db.Decimal(12, 4)
+  reception_status                String?  @db.VarChar
+  acceptance_status               String?  @db.VarChar
+  customer_return_id              Int?
+  reimbursement_id                Int?
+  acceptance_status_errors        String?
+  preferred_reimbursement_type_id Int?
+  override_reimbursement_type_id  Int?
+  resellable                      Boolean  @default(true)
+
+  @@index([customer_return_id], map: "index_return_items_on_customer_return_id")
+  @@index([exchange_variant_id], map: "index_spree_return_items_on_exchange_variant_id")
+  @@index([inventory_unit_id], map: "index_spree_return_items_on_inventory_unit_id")
+  @@index([override_reimbursement_type_id], map: "index_spree_return_items_on_override_reimbursement_type_id")
+  @@index([preferred_reimbursement_type_id], map: "index_spree_return_items_on_preferred_reimbursement_type_id")
+  @@index([reimbursement_id], map: "index_spree_return_items_on_reimbursement_id")
+  @@index([return_authorization_id], map: "index_spree_return_items_on_return_authorization_id")
+}
+
+model spree_reviews {
+  id              Int      @id @default(autoincrement())
+  product_id      Int?
+  name            String?  @db.VarChar
+  location        String?  @db.VarChar
+  rating          Int?
+  review          String?
+  created_at      DateTime @db.Timestamp(6)
+  updated_at      DateTime @db.Timestamp(6)
+  user_id         String?  @db.VarChar
+  ip_address      String?  @db.VarChar
+  locale          String?  @default("en") @db.VarChar
+  show_identifier Boolean? @default(true)
+  email           String?  @db.VarChar
+  status          Int?     @default(0)
+  order_id        String?  @default(dbgenerated("0")) @db.VarChar
+
+  @@index([order_id], map: "index_spree_reviews_on_order_id")
+  @@index([show_identifier], map: "index_spree_reviews_on_show_identifier")
+}
+
+model spree_role_users {
+  role_id Int?
+  user_id Int?
+  id      Int  @id @default(autoincrement())
+
+  @@index([role_id], map: "index_spree_role_users_on_role_id")
+  @@index([user_id], map: "index_spree_role_users_on_user_id")
+}
+
+model spree_roles {
+  id               Int      @id @default(autoincrement())
+  name             String?  @db.VarChar
+  editable         Boolean? @default(true)
+  is_default       Boolean? @default(false)
+  admin_accessible Boolean? @default(false)
+
+  @@index([editable], map: "index_spree_roles_on_editable")
+  @@index([is_default], map: "index_spree_roles_on_is_default")
+}
+
+model spree_roles_permission_sets {
+  id                Int  @id @default(autoincrement())
+  role_id           Int?
+  permission_set_id Int?
+
+  @@index([permission_set_id], map: "index_spree_roles_permission_sets_on_permission_set_id")
+  @@index([role_id], map: "index_spree_roles_permission_sets_on_role_id")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model spree_roles_permissions {
+  role_id       Int
+  permission_id Int
+
+  @@index([permission_id], map: "index_spree_roles_permissions_on_permission_id")
+  @@index([role_id], map: "index_spree_roles_permissions_on_role_id")
+  @@ignore
+}
+
+model spree_search_icon_categories {
+  id         Int      @id @default(autoincrement())
+  position   Int?
+  title      String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_search_icon_categories_on_position")
+}
+
+model spree_search_icons {
+  id                      Int      @id @default(autoincrement())
+  search_icon_category_id Int?
+  position                Int?
+  link                    String?  @db.VarChar
+  title                   String?  @db.VarChar
+  created_at              DateTime @db.Timestamp(6)
+  updated_at              DateTime @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_search_icons_on_position")
+  @@index([search_icon_category_id], map: "index_spree_search_icons_on_search_icon_category_id")
+}
+
+model spree_search_suggestion_categories {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  active     Boolean  @default(false)
+  position   Int
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_search_suggestion_categories_on_position")
+}
+
+model spree_search_suggestion_items {
+  id                            Int      @id @default(autoincrement())
+  name                          String?  @db.VarChar
+  url                           String?  @db.VarChar
+  active                        Boolean  @default(false)
+  position                      Int
+  search_suggestion_category_id Int?
+  created_at                    DateTime @db.Timestamp(6)
+  updated_at                    DateTime @db.Timestamp(6)
+
+  @@index([search_suggestion_category_id], map: "index_search_suggestion_items_search_suggestion_category_id")
+  @@index([position], map: "index_spree_search_suggestion_items_on_position")
+}
+
+model spree_searchspring_sync_items {
+  id            Int       @id @default(autoincrement())
+  action        String?   @db.VarChar
+  syncable_id   Int?
+  syncable_type String?   @db.VarChar
+  synced        Boolean   @default(false)
+  created_at    DateTime? @db.Timestamp(6)
+  updated_at    DateTime? @db.Timestamp(6)
+
+  @@index([action], map: "index_spree_searchspring_sync_items_on_action")
+  @@index([syncable_id], map: "index_spree_searchspring_sync_items_on_syncable_id")
+  @@index([syncable_type], map: "index_spree_searchspring_sync_items_on_syncable_type")
+  @@index([synced], map: "index_spree_searchspring_sync_items_on_synced")
+}
+
+model spree_section_images {
+  id                     BigInt    @id @default(autoincrement())
+  image_alt              String?   @db.VarChar
+  link_url               String?   @db.VarChar
+  default                Boolean?
+  publish_at             DateTime? @db.Timestamp(6)
+  unpublish_at           DateTime? @db.Timestamp(6)
+  home_banner_section_id BigInt?
+  seo_heading            String?   @db.VarChar
+  seo_text               String?
+  text_position          Int?
+  created_at             DateTime  @db.Timestamp(6)
+  updated_at             DateTime  @db.Timestamp(6)
+
+  @@index([home_banner_section_id], map: "index_section_images_home_banner_section_id")
+}
+
+model spree_shipments {
+  id                           Int       @id @default(autoincrement())
+  tracking                     String?   @db.VarChar
+  number                       String?   @unique(map: "index_spree_shipments_on_number") @db.VarChar
+  cost                         Decimal?  @default(0.0) @db.Decimal(10, 2)
+  shipped_at                   DateTime? @db.Timestamp(6)
+  order_id                     Int?
+  address_id                   Int?
+  state                        String?   @db.VarChar
+  created_at                   DateTime  @db.Timestamp(6)
+  updated_at                   DateTime  @db.Timestamp(6)
+  stock_location_id            Int?
+  adjustment_total             Decimal?  @default(0.0) @db.Decimal(10, 2)
+  additional_tax_total         Decimal?  @default(0.0) @db.Decimal(10, 2)
+  promo_total                  Decimal?  @default(0.0) @db.Decimal(10, 2)
+  included_tax_total           Decimal   @default(0.0) @db.Decimal(10, 2)
+  pre_tax_amount               Decimal   @default(0.0) @db.Decimal(12, 4)
+  taxable_adjustment_total     Decimal   @default(0.0) @db.Decimal(10, 2)
+  non_taxable_adjustment_total Decimal   @default(0.0) @db.Decimal(10, 2)
+
+  @@index([address_id], map: "index_spree_shipments_on_address_id")
+  @@index([order_id], map: "index_spree_shipments_on_order_id")
+  @@index([stock_location_id], map: "index_spree_shipments_on_stock_location_id")
+}
+
+model spree_shipping_categories {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([name], map: "index_spree_shipping_categories_on_name")
+}
+
+model spree_shipping_method_categories {
+  id                   Int      @id @default(autoincrement())
+  shipping_method_id   Int
+  shipping_category_id Int
+  created_at           DateTime @db.Timestamp(6)
+  updated_at           DateTime @db.Timestamp(6)
+
+  @@unique([shipping_category_id, shipping_method_id], map: "unique_spree_shipping_method_categories")
+  @@index([shipping_category_id], map: "index_spree_shipping_method_categories_on_shipping_category_id")
+  @@index([shipping_method_id], map: "index_spree_shipping_method_categories_on_shipping_method_id")
+}
+
+model spree_shipping_method_zones {
+  shipping_method_id Int?
+  zone_id            Int?
+  id                 Int  @id @default(autoincrement())
+
+  @@index([shipping_method_id], map: "index_spree_shipping_method_zones_on_shipping_method_id")
+  @@index([zone_id], map: "index_spree_shipping_method_zones_on_zone_id")
+}
+
+model spree_shipping_methods {
+  id                Int       @id @default(autoincrement())
+  name              String?   @db.VarChar
+  display_on        String?   @db.VarChar
+  deleted_at        DateTime? @db.Timestamp(6)
+  created_at        DateTime  @db.Timestamp(6)
+  updated_at        DateTime  @db.Timestamp(6)
+  tracking_url      String?   @db.VarChar
+  admin_name        String?   @db.VarChar
+  tax_category_id   Int?
+  code              String?   @db.VarChar
+  description       String?
+  hint              String?
+  berp_service_id   Int?      @default(0)
+  included_services String?   @default("{}")
+
+  @@index([deleted_at], map: "index_spree_shipping_methods_on_deleted_at")
+  @@index([tax_category_id], map: "index_spree_shipping_methods_on_tax_category_id")
+}
+
+model spree_shipping_rates {
+  id                 Int      @id @default(autoincrement())
+  shipment_id        Int?
+  shipping_method_id Int?
+  selected           Boolean? @default(false)
+  cost               Decimal? @default(0) @db.Decimal(8, 2)
+  created_at         DateTime @db.Timestamp(6)
+  updated_at         DateTime @db.Timestamp(6)
+  tax_rate_id        Int?
+  restricted         Boolean? @default(false)
+
+  @@unique([shipment_id, shipping_method_id], map: "spree_shipping_rates_join_index")
+  @@index([selected], map: "index_spree_shipping_rates_on_selected")
+  @@index([shipment_id], map: "index_spree_shipping_rates_on_shipment_id")
+  @@index([shipping_method_id], map: "index_spree_shipping_rates_on_shipping_method_id")
+  @@index([tax_rate_id], map: "index_spree_shipping_rates_on_tax_rate_id")
+}
+
+model spree_shop_by_categories {
+  id                 Int       @id @default(autoincrement())
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  image_alt          String?   @db.VarChar
+  url                String?   @db.VarChar
+  title              String?   @db.VarChar
+  active             Boolean   @default(false)
+  position           Int
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_shop_by_categories_on_position")
+}
+
+model spree_shop_by_materials {
+  id                 Int       @id @default(autoincrement())
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  image_alt          String?   @db.VarChar
+  url                String?   @db.VarChar
+  title              String?   @db.VarChar
+  active             Boolean   @default(false)
+  position           Int
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_shop_by_materials_on_position")
+}
+
+model spree_shop_by_styles {
+  id                 Int       @id @default(autoincrement())
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  image_alt          String?   @db.VarChar
+  url                String?   @db.VarChar
+  title              String?   @db.VarChar
+  active             Boolean   @default(false)
+  position           Int
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_shop_by_styles_on_position")
+}
+
+model spree_skrill_transactions {
+  id             Int       @id @default(autoincrement())
+  email          String?   @db.VarChar
+  amount         Float?
+  currency       String?   @db.VarChar
+  transaction_id Int?
+  customer_id    Int?
+  payment_type   String?   @db.VarChar
+  created_at     DateTime? @db.Timestamp(6)
+  updated_at     DateTime? @db.Timestamp(6)
+}
+
+model spree_sku_rules {
+  id               Int       @id @default(autoincrement())
+  taxon_rule_id    Int?
+  csv_file_name    String?   @db.VarChar
+  csv_content_type String?   @db.VarChar
+  csv_file_size    Int?
+  csv_updated_at   DateTime? @db.Timestamp(6)
+  skus             String?
+  created_at       DateTime  @db.Timestamp(6)
+  updated_at       DateTime  @db.Timestamp(6)
+  deleted_at       DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_sku_rules_on_deleted_at")
+  @@index([taxon_rule_id], map: "index_spree_sku_rules_on_taxon_rule_id")
+}
+
+model spree_slide_locations {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar
+  created_at DateTime? @db.Timestamp(6)
+  updated_at DateTime? @db.Timestamp(6)
+}
+
+model spree_slide_slide_locations {
+  id                Int  @id @default(autoincrement())
+  slide_id          Int?
+  slide_location_id Int?
+
+  @@index([slide_id], map: "index_spree_slide_slide_locations_on_slide_id")
+  @@index([slide_location_id], map: "index_spree_slide_slide_locations_on_slide_location_id")
+}
+
+model spree_slides {
+  id                         Int       @id @default(autoincrement())
+  name                       String?   @db.VarChar
+  body                       String?
+  link_url                   String?   @db.VarChar
+  published                  Boolean?  @default(false)
+  image_file_name            String?   @db.VarChar
+  image_content_type         String?   @db.VarChar
+  image_file_size            Int?
+  image_updated_at           DateTime? @db.Timestamp(6)
+  created_at                 DateTime? @db.Timestamp(6)
+  updated_at                 DateTime? @db.Timestamp(6)
+  position                   Int       @default(0)
+  product_id                 Int?
+  image_alt                  String?   @db.VarChar
+  button_text                String?   @db.VarChar
+  button_link_url            String?   @db.VarChar
+  alignment                  Int       @default(0)
+  mobile_image_file_name     String?   @db.VarChar
+  mobile_image_content_type  String?   @db.VarChar
+  mobile_image_file_size     Int?
+  mobile_image_updated_at    DateTime? @db.Timestamp(6)
+  ipad_image_file_name       String?   @db.VarChar
+  ipad_image_content_type    String?   @db.VarChar
+  ipad_image_file_size       Int?
+  ipad_image_updated_at      DateTime? @db.Timestamp(6)
+  desktop_image_file_name    String?   @db.VarChar
+  desktop_image_content_type String?   @db.VarChar
+  desktop_image_file_size    Int?
+  desktop_image_updated_at   DateTime? @db.Timestamp(6)
+}
+
+model spree_softness_levels {
+  id          BigInt   @id @default(autoincrement())
+  name        String?  @db.VarChar
+  description String?
+  level       Int?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+}
+
+model spree_state_changes {
+  id             Int      @id @default(autoincrement())
+  name           String?  @db.VarChar
+  previous_state String?  @db.VarChar
+  stateful_id    Int?
+  user_id        Int?
+  stateful_type  String?  @db.VarChar
+  next_state     String?  @db.VarChar
+  created_at     DateTime @db.Timestamp(6)
+  updated_at     DateTime @db.Timestamp(6)
+
+  @@index([stateful_id, stateful_type], map: "index_spree_state_changes_on_stateful_id_and_stateful_type")
+}
+
+model spree_states {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar
+  abbr       String?   @db.VarChar
+  country_id Int?
+  updated_at DateTime? @db.Timestamp(6)
+
+  @@index([country_id], map: "index_spree_states_on_country_id")
+}
+
+model spree_stock_items {
+  id                Int       @id @default(autoincrement())
+  stock_location_id Int?
+  variant_id        Int?
+  count_on_hand     Int       @default(0)
+  created_at        DateTime  @db.Timestamp(6)
+  updated_at        DateTime  @db.Timestamp(6)
+  backorderable     Boolean?  @default(false)
+  deleted_at        DateTime? @db.Timestamp(6)
+
+  @@index([backorderable], map: "index_spree_stock_items_on_backorderable")
+  @@index([deleted_at], map: "index_spree_stock_items_on_deleted_at")
+  @@index([stock_location_id], map: "index_spree_stock_items_on_stock_location_id")
+  @@index([variant_id], map: "index_spree_stock_items_on_variant_id")
+  @@index([stock_location_id, variant_id], map: "stock_item_by_loc_and_var_id")
+}
+
+model spree_stock_locations {
+  id                     Int      @id @default(autoincrement())
+  name                   String?  @db.VarChar
+  created_at             DateTime @db.Timestamp(6)
+  updated_at             DateTime @db.Timestamp(6)
+  default                Boolean  @default(false)
+  address1               String?  @db.VarChar
+  address2               String?  @db.VarChar
+  city                   String?  @db.VarChar
+  state_id               Int?
+  state_name             String?  @db.VarChar
+  country_id             Int?
+  zipcode                String?  @db.VarChar
+  phone                  String?  @db.VarChar
+  active                 Boolean? @default(true)
+  backorderable_default  Boolean? @default(false)
+  propagate_all_variants Boolean? @default(true)
+  admin_name             String?  @db.VarChar
+
+  @@index([active], map: "index_spree_stock_locations_on_active")
+  @@index([backorderable_default], map: "index_spree_stock_locations_on_backorderable_default")
+  @@index([country_id], map: "index_spree_stock_locations_on_country_id")
+  @@index([propagate_all_variants], map: "index_spree_stock_locations_on_propagate_all_variants")
+  @@index([state_id], map: "index_spree_stock_locations_on_state_id")
+}
+
+model spree_stock_movements {
+  id              Int      @id @default(autoincrement())
+  stock_item_id   Int?
+  quantity        Int?     @default(0)
+  action          String?  @db.VarChar
+  created_at      DateTime @db.Timestamp(6)
+  updated_at      DateTime @db.Timestamp(6)
+  originator_id   Int?
+  originator_type String?  @db.VarChar
+
+  @@index([stock_item_id], map: "index_spree_stock_movements_on_stock_item_id")
+  @@index([originator_id, originator_type], map: "index_stock_movements_on_originator_id_and_originator_type")
+}
+
+model spree_stock_rules {
+  id            Int       @id @default(autoincrement())
+  taxon_rule_id Int?
+  rule_type     Int?
+  quantity      Int       @default(0)
+  created_at    DateTime  @db.Timestamp(6)
+  updated_at    DateTime  @db.Timestamp(6)
+  deleted_at    DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_stock_rules_on_deleted_at")
+  @@index([taxon_rule_id], map: "index_spree_stock_rules_on_taxon_rule_id")
+}
+
+model spree_stock_transfers {
+  id                      Int      @id @default(autoincrement())
+  type                    String?  @db.VarChar
+  reference               String?  @db.VarChar
+  source_location_id      Int?
+  destination_location_id Int?
+  created_at              DateTime @db.Timestamp(6)
+  updated_at              DateTime @db.Timestamp(6)
+  number                  String?  @unique(map: "index_spree_stock_transfers_on_number") @db.VarChar
+
+  @@index([destination_location_id], map: "index_spree_stock_transfers_on_destination_location_id")
+  @@index([source_location_id], map: "index_spree_stock_transfers_on_source_location_id")
+}
+
+model spree_store_credit_categories {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([name], map: "index_spree_store_credit_categories_on_name")
+}
+
+model spree_store_credit_events {
+  id                 Int       @id @default(autoincrement())
+  store_credit_id    Int
+  action             String    @db.VarChar
+  amount             Decimal?  @db.Decimal(8, 2)
+  authorization_code String    @db.VarChar
+  user_total_amount  Decimal   @default(0.0) @db.Decimal(8, 2)
+  originator_id      Int?
+  originator_type    String?   @db.VarChar
+  deleted_at         DateTime? @db.Timestamp(6)
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+
+  @@index([store_credit_id], map: "index_spree_store_credit_events_on_store_credit_id")
+  @@index([originator_id, originator_type], map: "spree_store_credit_events_originator")
+}
+
+model spree_store_credit_types {
+  id         Int      @id @default(autoincrement())
+  name       String?  @db.VarChar
+  priority   Int?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([priority], map: "index_spree_store_credit_types_on_priority")
+}
+
+model spree_store_credits {
+  id                Int       @id @default(autoincrement())
+  user_id           Int?
+  category_id       Int?
+  created_by_id     Int?
+  amount            Decimal   @default(0.0) @db.Decimal(8, 2)
+  amount_used       Decimal   @default(0.0) @db.Decimal(8, 2)
+  memo              String?
+  deleted_at        DateTime? @db.Timestamp(6)
+  currency          String?   @db.VarChar
+  amount_authorized Decimal   @default(0.0) @db.Decimal(8, 2)
+  originator_id     Int?
+  originator_type   String?   @db.VarChar
+  type_id           Int?
+  created_at        DateTime  @db.Timestamp(6)
+  updated_at        DateTime  @db.Timestamp(6)
+  expire_at         DateTime? @db.Timestamp(6)
+  referred_user_id  Int?
+
+  @@index([deleted_at], map: "index_spree_store_credits_on_deleted_at")
+  @@index([type_id], map: "index_spree_store_credits_on_type_id")
+  @@index([user_id], map: "index_spree_store_credits_on_user_id")
+  @@index([originator_id, originator_type], map: "spree_store_credits_originator")
+}
+
+model spree_stores {
+  id                Int      @id @default(autoincrement())
+  name              String?  @db.VarChar
+  url               String?  @db.VarChar
+  meta_description  String?
+  meta_keywords     String?
+  seo_title         String?  @db.VarChar
+  mail_from_address String?  @db.VarChar
+  default_currency  String?  @db.VarChar
+  code              String?  @db.VarChar
+  default           Boolean  @default(false)
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @db.Timestamp(6)
+
+  @@index([default], map: "index_spree_stores_on_default")
+  @@index([url], map: "index_spree_stores_on_url")
+}
+
+model spree_studio_appointments {
+  id                         Int      @id @default(autoincrement())
+  title                      String?  @db.VarChar
+  body                       String?
+  iframe_src                 String?  @db.VarChar
+  active                     Boolean  @default(false)
+  studio_page_id             Int?
+  created_at                 DateTime @db.Timestamp(6)
+  updated_at                 DateTime @db.Timestamp(6)
+  email_registration_enabled Boolean  @default(false)
+  form_enabled               Boolean  @default(false)
+  scroll_bar_title           String?  @db.VarChar
+  registration_message       String?  @db.VarChar
+  modal_body                 String?
+  modal_heading              String?  @db.VarChar
+  modal_studio_name          String?  @db.VarChar
+}
+
+model spree_studio_designed_to_be_differents {
+  id             Int      @id @default(autoincrement())
+  title          String?  @db.VarChar
+  body           String?
+  active         Boolean  @default(false)
+  studio_page_id Int?
+  created_at     DateTime @db.Timestamp(6)
+  updated_at     DateTime @db.Timestamp(6)
+}
+
+model spree_studio_display_products {
+  id                 Int       @id @default(autoincrement())
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  studio_page_id     Int?
+  link_to            String?   @db.VarChar
+  active             Boolean   @default(false)
+  position           Int
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_studio_display_products_on_position")
+}
+
+model spree_studio_displays {
+  id             Int      @id @default(autoincrement())
+  title          String?  @db.VarChar
+  body           String?
+  active         Boolean  @default(false)
+  studio_page_id Int?
+  created_at     DateTime @db.Timestamp(6)
+  updated_at     DateTime @db.Timestamp(6)
+  category_link  String?  @db.VarChar
+}
+
+model spree_studio_experience_items {
+  id             BigInt   @id @default(autoincrement())
+  title          String?  @db.VarChar
+  body           String?
+  position       Int      @default(0)
+  studio_page_id BigInt?
+  active         Boolean  @default(false)
+  created_at     DateTime @db.Timestamp(6)
+  updated_at     DateTime @db.Timestamp(6)
+
+  @@index([studio_page_id], map: "index_spree_studio_experience_items_on_studio_page_id")
+}
+
+model spree_studio_experiences {
+  id                    BigInt   @id @default(autoincrement())
+  module_title          String?  @db.VarChar
+  scroll_bar_title      String?  @db.VarChar
+  active                Boolean  @default(false)
+  second_item_image_url String?  @db.VarChar
+  second_item_title     String?  @db.VarChar
+  third_item_image_url  String?  @db.VarChar
+  third_item_title      String?  @db.VarChar
+  free_parking_title    String?  @db.VarChar
+  studio_page_id        BigInt?
+  created_at            DateTime @db.Timestamp(6)
+  updated_at            DateTime @db.Timestamp(6)
+  title                 String?  @db.VarChar
+  title_label           String?  @db.VarChar
+  body                  String?
+
+  @@index([studio_page_id], map: "index_spree_studio_experiences_on_studio_page_id")
+}
+
+model spree_studio_images {
+  id                 Int       @id @default(autoincrement())
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  caption            String?   @db.VarChar
+  active             Boolean   @default(false)
+  studio_page_id     Int?
+  position           Int
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_studio_images_on_position")
+  @@index([studio_page_id], map: "index_spree_studio_images_on_studio_page_id")
+}
+
+model spree_studio_introductions {
+  id                Int      @id @default(autoincrement())
+  title             String?  @db.VarChar
+  body              String?
+  active            Boolean  @default(false)
+  studio_page_id    Int?
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @db.Timestamp(6)
+  desktop_image_alt String?  @db.VarChar
+  mobile_image_alt  String?  @db.VarChar
+}
+
+model spree_studio_links {
+  id                        Int       @id @default(autoincrement())
+  image_file_name           String?   @db.VarChar
+  image_content_type        String?   @db.VarChar
+  image_file_size           Int?
+  image_updated_at          DateTime? @db.Timestamp(6)
+  image_alt                 String?   @db.VarChar
+  link                      String?   @db.VarChar
+  body                      String?   @db.VarChar
+  active                    Boolean?
+  studio_page_id            Int?
+  created_at                DateTime  @db.Timestamp(6)
+  updated_at                DateTime  @db.Timestamp(6)
+  left_section_heading      String?   @db.VarChar
+  appointment_button_text   String?   @db.VarChar
+  cta_banner_title          String?   @db.VarChar
+  cta_banner_body           String?
+  covid_banner_title        String?   @db.VarChar
+  covid_banner_body         String?
+  covid_banner_second_title String?   @db.VarChar
+  covid_banner_second_body  String?
+}
+
+model spree_studio_locations {
+  id                             Int      @id @default(autoincrement())
+  title                          String?  @db.VarChar
+  address                        String?
+  opening_hours                  String?
+  iframe_src                     String?  @db.VarChar
+  active                         Boolean  @default(false)
+  studio_page_id                 Int?
+  created_at                     DateTime @db.Timestamp(6)
+  updated_at                     DateTime @db.Timestamp(6)
+  walk_in_available              Boolean? @default(false)
+  google_markup_json             String?  @default("{}")
+  image_url                      String?  @db.VarChar
+  virtual_consultation_available Boolean? @default(false)
+  contact_email                  String?  @db.VarChar
+  studio_visit_contact_number    String?  @db.VarChar
+  customer_contact_number        String?  @db.VarChar
+  address_box                    String?
+  opening_hours_box              String?
+  latitude                       String?  @db.VarChar
+  longitude                      String?  @db.VarChar
+  body                           String?
+}
+
+model spree_studio_pages {
+  id                              Int       @id @default(autoincrement())
+  permalink                       String    @db.VarChar
+  location                        String?   @db.VarChar
+  sub_location                    String?   @db.VarChar
+  desktop_image_file_name         String?   @db.VarChar
+  desktop_image_content_type      String?   @db.VarChar
+  desktop_image_file_size         Int?
+  desktop_image_updated_at        DateTime? @db.Timestamp(6)
+  products_on_display_count       String?   @db.VarChar
+  desktop_image_alt               String?   @db.VarChar
+  og_image_url                    String?   @db.VarChar
+  og_title                        String?   @db.VarChar
+  og_description                  String?   @db.VarChar
+  og_url                          String?   @db.VarChar
+  position                        Int
+  active                          Boolean   @default(false)
+  created_at                      DateTime  @db.Timestamp(6)
+  updated_at                      DateTime  @db.Timestamp(6)
+  open                            Boolean   @default(false)
+  experience_active               Boolean   @default(false)
+  mobile_image_file_name          String?   @db.VarChar
+  mobile_image_content_type       String?   @db.VarChar
+  mobile_image_file_size          Int?
+  mobile_image_updated_at         DateTime? @db.Timestamp(6)
+  mobile_image_alt                String?   @db.VarChar
+  opening_tag                     String?   @db.VarChar
+  mini_desktop_image_file_name    String?   @db.VarChar
+  mini_desktop_image_content_type String?   @db.VarChar
+  mini_desktop_image_file_size    Int?
+  mini_desktop_image_updated_at   DateTime? @db.Timestamp(6)
+  mini_desktop_image_alt          String?   @db.VarChar
+  meta_title                      String?   @db.VarChar
+  meta_description                String?
+  seo_nofollow                    Boolean?  @default(false)
+  seo_noindex                     Boolean?  @default(false)
+  experience_module_title         String?   @db.VarChar
+  experience_scroll_bar_title     String?   @db.VarChar
+  reviews_module_title            String?   @db.VarChar
+  reviews_scroll_bar_title        String?   @db.VarChar
+  free_parking_enabled            Boolean   @default(false)
+  title                           String?   @db.VarChar
+  title_label                     String?   @db.VarChar
+  button_text                     String?   @db.VarChar
+  description                     String?
+  studio_state                    Int?
+
+  @@index([permalink], map: "index_spree_studio_pages_on_permalink")
+  @@index([position], map: "index_spree_studio_pages_on_position")
+}
+
+model spree_studio_product_introductions {
+  id                BigInt   @id @default(autoincrement())
+  title             String?  @db.VarChar
+  body              String?
+  desktop_image_alt String?  @db.VarChar
+  mobile_image_alt  String?  @db.VarChar
+  studio_page_id    BigInt?
+  active            Boolean  @default(false)
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @db.Timestamp(6)
+
+  @@index([studio_page_id], map: "index_spree_studio_product_introductions_on_studio_page_id")
+}
+
+model spree_studio_reviews {
+  id             Int      @id @default(autoincrement())
+  body           String?
+  rating         Int      @default(1)
+  active         Boolean  @default(false)
+  position       Int
+  studio_page_id Int?
+  created_at     DateTime @db.Timestamp(6)
+  updated_at     DateTime @db.Timestamp(6)
+  reviewer_name  String?  @db.VarChar
+  date           String?  @db.VarChar
+
+  @@index([position], map: "index_spree_studio_reviews_on_position")
+}
+
+model spree_studio_stylists {
+  id                 Int       @id @default(autoincrement())
+  title              String?   @db.VarChar
+  body               String?
+  active             Boolean   @default(false)
+  studio_page_id     Int?
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  image_alt          String?   @db.VarChar
+}
+
+model spree_style_your_space_application_options {
+  id                              Int      @id @default(autoincrement())
+  style_your_space_application_id Int?
+  style_your_space_option_id      Int?
+  created_at                      DateTime @db.Timestamp(6)
+  updated_at                      DateTime @db.Timestamp(6)
+
+  @@index([style_your_space_application_id], map: "index_style_your_space_application_id")
+  @@index([style_your_space_option_id], map: "index_style_your_space_option_id")
+}
+
+model spree_style_your_space_application_types {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+  preferences String?
+}
+
+model spree_style_your_space_applications {
+  id                                   Int      @id @default(autoincrement())
+  email                                String?  @db.VarChar
+  status                               Int      @default(0)
+  created_at                           DateTime @db.Timestamp(6)
+  updated_at                           DateTime @db.Timestamp(6)
+  phone                                String?  @db.VarChar
+  full_name                            String?  @db.VarChar
+  preferences                          String?
+  style_your_space_application_type_id Int?
+
+  @@index([status], map: "index_spree_style_your_space_applications_on_status")
+  @@index([style_your_space_application_type_id], map: "index_spree_style_your_space_applications_type_id")
+}
+
+model spree_style_your_space_options {
+  id                       Int       @id @default(autoincrement())
+  name                     String?   @db.VarChar
+  text                     String?   @db.VarChar
+  image_file_name          String?   @db.VarChar
+  image_content_type       String?   @db.VarChar
+  image_file_size          Int?
+  image_updated_at         DateTime? @db.Timestamp(6)
+  position                 Int?
+  active                   Boolean   @default(false)
+  created_at               DateTime  @db.Timestamp(6)
+  updated_at               DateTime  @db.Timestamp(6)
+  style_your_space_step_id Int?
+
+  @@index([style_your_space_step_id], map: "index_spree_style_your_space_options_step_id")
+}
+
+model spree_style_your_space_steps {
+  id                                   Int      @id @default(autoincrement())
+  name                                 String?  @db.VarChar
+  preferences                          String?
+  multiple_selection_allowed           Boolean  @default(false)
+  style_your_space_application_type_id Int?
+  created_at                           DateTime @db.Timestamp(6)
+  updated_at                           DateTime @db.Timestamp(6)
+  position                             Int      @default(0)
+
+  @@index([style_your_space_application_type_id], map: "index_spree_style_your_space_steps_application_type_id")
+  @@index([position], map: "index_spree_style_your_space_steps_on_position")
+}
+
+model spree_sync_entities {
+  id             Int      @id @default(autoincrement())
+  name           String?  @db.VarChar
+  sync_group     Int?
+  last_synced_at DateTime @db.Timestamp(6)
+  created_at     DateTime @db.Timestamp(6)
+  updated_at     DateTime @db.Timestamp(6)
+}
+
+model spree_sync_events {
+  id                Int       @id @default(autoincrement())
+  sync_entity_id    Int?
+  syncable_id       Int?
+  syncable_type     String?   @db.VarChar
+  sync_completed_at DateTime? @db.Timestamp(6)
+  created_at        DateTime  @db.Timestamp(6)
+  updated_at        DateTime  @db.Timestamp(6)
+
+  @@index([syncable_type, syncable_id], map: "index_spree_sync_events_on_syncable_type_and_syncable_id")
+}
+
+model spree_taggings {
+  id            Int       @id @default(autoincrement())
+  tag_id        Int?
+  taggable_id   Int?
+  taggable_type String?   @db.VarChar
+  tagger_id     Int?
+  tagger_type   String?   @db.VarChar
+  context       String?   @db.VarChar(128)
+  created_at    DateTime? @db.Timestamp(6)
+  deleted_at    DateTime? @db.Timestamp(6)
+
+  @@unique([tag_id, taggable_id, taggable_type, context, tagger_id, tagger_type], map: "spree_taggings_idx")
+  @@index([context], map: "index_spree_taggings_on_context")
+  @@index([deleted_at], map: "index_spree_taggings_on_deleted_at")
+  @@index([tag_id], map: "index_spree_taggings_on_tag_id")
+  @@index([taggable_id], map: "index_spree_taggings_on_taggable_id")
+  @@index([taggable_type], map: "index_spree_taggings_on_taggable_type")
+  @@index([tagger_id], map: "index_spree_taggings_on_tagger_id")
+  @@index([tagger_id, tagger_type], map: "index_spree_taggings_on_tagger_id_and_tagger_type")
+  @@index([taggable_id, taggable_type, tagger_id, context], map: "spree_taggings_idy")
+}
+
+model spree_tags {
+  id               Int       @id @default(autoincrement())
+  name             String?   @unique(map: "index_spree_tags_on_name") @db.VarChar
+  taggings_count   Int?      @default(0)
+  core_resource_id Int?      @default(0)
+  brosa_created_at DateTime? @db.Timestamp(6)
+  brosa_updated_at DateTime? @db.Timestamp(6)
+}
+
+model spree_tax_categories {
+  id          Int       @id @default(autoincrement())
+  name        String?   @db.VarChar
+  description String?   @db.VarChar
+  is_default  Boolean?  @default(false)
+  deleted_at  DateTime? @db.Timestamp(6)
+  created_at  DateTime  @db.Timestamp(6)
+  updated_at  DateTime  @db.Timestamp(6)
+  tax_code    String?   @db.VarChar
+
+  @@index([deleted_at], map: "index_spree_tax_categories_on_deleted_at")
+  @@index([is_default], map: "index_spree_tax_categories_on_is_default")
+}
+
+model spree_tax_rates {
+  id                 Int       @id @default(autoincrement())
+  amount             Decimal?  @db.Decimal(8, 5)
+  zone_id            Int?
+  tax_category_id    Int?
+  included_in_price  Boolean?  @default(false)
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+  name               String?   @db.VarChar
+  show_rate_in_label Boolean?  @default(true)
+  deleted_at         DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_tax_rates_on_deleted_at")
+  @@index([included_in_price], map: "index_spree_tax_rates_on_included_in_price")
+  @@index([show_rate_in_label], map: "index_spree_tax_rates_on_show_rate_in_label")
+  @@index([tax_category_id], map: "index_spree_tax_rates_on_tax_category_id")
+  @@index([zone_id], map: "index_spree_tax_rates_on_zone_id")
+}
+
+model spree_taxon_rules {
+  id                   Int       @id @default(autoincrement())
+  taxon_id             Int?
+  type                 String?   @db.VarChar
+  created_at           DateTime  @db.Timestamp(6)
+  updated_at           DateTime  @db.Timestamp(6)
+  sales_price_required Boolean?  @default(false)
+  deleted_at           DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_taxon_rules_on_deleted_at")
+  @@index([taxon_id], map: "index_spree_taxon_rules_on_taxon_id")
+}
+
+model spree_taxon_taxon_rules {
+  id            Int       @id @default(autoincrement())
+  taxon_id      Int?
+  taxon_rule_id Int?
+  created_at    DateTime  @db.Timestamp(6)
+  updated_at    DateTime  @db.Timestamp(6)
+  deleted_at    DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_taxon_taxon_rules_on_deleted_at")
+  @@index([taxon_id], map: "index_spree_taxon_taxon_rules_on_taxon_id")
+  @@index([taxon_rule_id], map: "index_spree_taxon_taxon_rules_on_taxon_rule_id")
+}
+
+model spree_taxonomies {
+  id               Int       @id @default(autoincrement())
+  name             String    @db.VarChar
+  created_at       DateTime  @db.Timestamp(6)
+  updated_at       DateTime  @db.Timestamp(6)
+  position         Int?      @default(0)
+  core_resource_id Int?      @default(0)
+  adhoc            Boolean?  @default(false)
+  deleted_at       DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_taxonomies_on_deleted_at")
+  @@index([position], map: "index_spree_taxonomies_on_position")
+}
+
+model spree_taxons {
+  id                            Int       @id @default(autoincrement())
+  parent_id                     Int?
+  position                      Int?      @default(0)
+  name                          String    @db.VarChar
+  permalink                     String?   @db.VarChar
+  taxonomy_id                   Int?
+  lft                           Int?
+  rgt                           Int?
+  description                   String?
+  created_at                    DateTime  @db.Timestamp(6)
+  updated_at                    DateTime  @db.Timestamp(6)
+  meta_title                    String?   @db.VarChar
+  meta_description              String?   @db.VarChar
+  meta_keywords                 String?   @db.VarChar
+  depth                         Int?
+  seo_nofollow                  Boolean?  @default(false)
+  seo_noindex                   Boolean?  @default(false)
+  seo_url                       String?   @db.VarChar
+  additional_description        String?
+  video_snippet                 String?
+  product_display               Int       @default(0)
+  template                      Int       @default(0)
+  published                     Boolean   @default(false)
+  core_resource_id              Int?      @default(0)
+  sales                         Boolean?  @default(false)
+  brosa_created_at              DateTime? @db.Timestamp(6)
+  brosa_updated_at              DateTime? @db.Timestamp(6)
+  banner_text_color             String?   @db.VarChar
+  enable_banner                 Boolean   @default(true)
+  display_title                 String?   @db.VarChar
+  category_modules_title        String?   @db.VarChar
+  top_content                   String?
+  top_content_enabled           Boolean   @default(false)
+  og_image_url                  String?   @db.VarChar
+  og_title                      String?   @db.VarChar
+  og_description                String?   @db.VarChar
+  og_url                        String?   @db.VarChar
+  adhoc                         Boolean?  @default(false)
+  hullabalook_enabled           Boolean?  @default(false)
+  has_rules                     Boolean   @default(false)
+  deleted_at                    DateTime? @db.Timestamp(6)
+  exclude_from_related_category Boolean   @default(false)
+  hullabalook_url               String?   @db.VarChar
+  hullabalook_text              String?   @db.VarChar
+  hullabalook_link_text         String?   @db.VarChar
+  feed_view_enabled             Boolean   @default(false)
+  content_position              Int       @default(0)
+  enable_white_colored_content  Boolean   @default(false)
+  enable_background_image       Boolean   @default(false)
+  default_lifestyle_image_url   String?   @db.VarChar
+  cropping_origin               Int?      @default(0)
+
+  @@index([deleted_at], map: "index_spree_taxons_on_deleted_at")
+  @@index([enable_banner], map: "index_spree_taxons_on_enable_banner")
+  @@index([lft], map: "index_spree_taxons_on_lft")
+  @@index([name], map: "index_spree_taxons_on_name")
+  @@index([position], map: "index_spree_taxons_on_position")
+  @@index([rgt], map: "index_spree_taxons_on_rgt")
+  @@index([parent_id], map: "index_taxons_on_parent_id")
+  @@index([permalink], map: "index_taxons_on_permalink")
+  @@index([taxonomy_id], map: "index_taxons_on_taxonomy_id")
+}
+
+model spree_template_images {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar
+  url        String?   @db.VarChar
+  taxon_id   Int?
+  created_at DateTime  @db.Timestamp(6)
+  updated_at DateTime  @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6)
+  position   Int       @default(0)
+
+  @@index([deleted_at], map: "index_spree_template_images_on_deleted_at")
+  @@index([taxon_id], map: "index_spree_template_images_on_taxon_id")
+}
+
+model spree_template_lifestyle_images {
+  id                BigInt   @id @default(autoincrement())
+  template_image_id BigInt?
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @db.Timestamp(6)
+
+  @@index([template_image_id], map: "index_spree_template_lifestyle_images_on_template_image_id")
+}
+
+model spree_text_split_sections {
+  id                               BigInt    @id @default(autoincrement())
+  description                      String?
+  heading                          String?   @db.VarChar
+  link_url                         String?   @db.VarChar
+  link_text                        String?   @db.VarChar
+  default                          Boolean?
+  publish_at                       DateTime? @db.Timestamp(6)
+  unpublish_at                     DateTime? @db.Timestamp(6)
+  home_text_image_split_section_id BigInt?
+  created_at                       DateTime  @db.Timestamp(6)
+  updated_at                       DateTime  @db.Timestamp(6)
+
+  @@index([home_text_image_split_section_id], map: "index_text_split_sections_home_text_image_split_section_id")
+}
+
+model spree_timber_variants {
+  id         Int      @id @default(autoincrement())
+  timber_id  Int?
+  variant_id Int?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([timber_id], map: "index_spree_timber_variants_on_timber_id")
+  @@index([variant_id], map: "index_spree_timber_variants_on_variant_id")
+}
+
+model spree_top_categories {
+  id         BigInt   @id @default(autoincrement())
+  name       String?  @db.VarChar
+  url        String?  @db.VarChar
+  active     Boolean  @default(false)
+  position   Int
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_top_categories_on_position")
+}
+
+model spree_trackers {
+  id           Int      @id @default(autoincrement())
+  analytics_id String?  @db.VarChar
+  active       Boolean? @default(true)
+  created_at   DateTime @db.Timestamp(6)
+  updated_at   DateTime @db.Timestamp(6)
+  engine       Int      @default(0)
+
+  @@index([active], map: "index_spree_trackers_on_active")
+}
+
+model spree_trackings {
+  id                 Int      @id @default(autoincrement())
+  entity_errors      String?
+  flash              String?
+  request_parameters String?
+  updated_parameters String?
+  ip_address         String?  @db.VarChar
+  entity_type        String?  @db.VarChar
+  response_code      Int?
+  user_id            Int?
+  created_at         DateTime @db.Timestamp(6)
+  updated_at         DateTime @db.Timestamp(6)
+}
+
+model spree_trust_images {
+  id                 Int       @id @default(autoincrement())
+  image_file_name    String?   @db.VarChar
+  image_content_type String?   @db.VarChar
+  image_file_size    Int?
+  image_updated_at   DateTime? @db.Timestamp(6)
+  image_alt          String?   @db.VarChar
+  active             Boolean   @default(false)
+  position           Int
+  created_at         DateTime  @db.Timestamp(6)
+  updated_at         DateTime  @db.Timestamp(6)
+
+  @@index([position], map: "index_spree_trust_images_on_position")
+}
+
+model spree_users {
+  id                     Int       @id @default(autoincrement())
+  encrypted_password     String?   @db.VarChar(128)
+  password_salt          String?   @db.VarChar(128)
+  email                  String?   @unique(map: "email_idx_unique") @db.VarChar
+  remember_token         String?   @db.VarChar
+  persistence_token      String?   @db.VarChar
+  reset_password_token   String?   @db.VarChar
+  perishable_token       String?   @db.VarChar
+  sign_in_count          Int       @default(0)
+  failed_attempts        Int       @default(0)
+  last_request_at        DateTime? @db.Timestamp(6)
+  current_sign_in_at     DateTime? @db.Timestamp(6)
+  last_sign_in_at        DateTime? @db.Timestamp(6)
+  current_sign_in_ip     String?   @db.VarChar
+  last_sign_in_ip        String?   @db.VarChar
+  login                  String?   @db.VarChar
+  ship_address_id        Int?
+  bill_address_id        Int?
+  authentication_token   String?   @db.VarChar
+  unlock_token           String?   @db.VarChar
+  locked_at              DateTime? @db.Timestamp(6)
+  reset_password_sent_at DateTime? @db.Timestamp(6)
+  created_at             DateTime  @db.Timestamp(6)
+  updated_at             DateTime  @db.Timestamp(6)
+  spree_api_key          String?   @db.VarChar(48)
+  remember_created_at    DateTime? @db.Timestamp(6)
+  deleted_at             DateTime? @db.Timestamp(6)
+  confirmation_token     String?   @db.VarChar
+  confirmed_at           DateTime? @db.Timestamp(6)
+  confirmation_sent_at   DateTime? @db.Timestamp(6)
+  firstname              String?   @db.VarChar
+  lastname               String?   @db.VarChar
+  offers_enabled         Boolean?  @default(false)
+  location               Int?
+
+  @@index([bill_address_id], map: "index_spree_users_on_bill_address_id")
+  @@index([deleted_at], map: "index_spree_users_on_deleted_at")
+  @@index([ship_address_id], map: "index_spree_users_on_ship_address_id")
+  @@index([spree_api_key], map: "index_spree_users_on_spree_api_key")
+}
+
+model spree_variant_component_materials {
+  id                   Int  @id @default(autoincrement())
+  material_id          Int?
+  variant_component_id Int?
+
+  @@index([material_id], map: "index_spree_variant_component_materials_on_material_id")
+  @@index([variant_component_id], map: "index_spree_variant_component_materials_on_variant_component_id")
+}
+
+model spree_variant_components {
+  id           Int       @id @default(autoincrement())
+  display_name String?   @db.VarChar
+  is_visible   Boolean   @default(false)
+  variant_id   Int?
+  component_id Int?
+  created_at   DateTime? @db.Timestamp(6)
+  updated_at   DateTime? @db.Timestamp(6)
+
+  @@index([component_id], map: "index_spree_variant_components_on_component_id")
+  @@index([variant_id], map: "index_spree_variant_components_on_variant_id")
+}
+
+model spree_variant_details {
+  id                Int       @id @default(autoincrement())
+  variant_id        Int?
+  ss_size           String?   @default("")
+  colour            String?   @default("")
+  frame_type        String?   @default("")
+  material_features String?   @default("")
+  swatch            String?   @default("")
+  swatch_colour     String?   @default("")
+  upholstery        String?   @default("")
+  created_at        DateTime? @db.Timestamp(6)
+  updated_at        DateTime? @db.Timestamp(6)
+  leg_colour        String?
+  top_material      String?
+  bigger_swatch     String?
+  material_filter   String?
+
+  @@index([variant_id], map: "index_spree_variant_details_on_variant_id")
+}
+
+model spree_variant_properties {
+  id          Int      @id @default(autoincrement())
+  value       String?  @db.VarChar
+  variant_id  Int?
+  property_id Int?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+
+  @@index([property_id], map: "index_spree_variant_properties_on_property_id")
+  @@index([variant_id], map: "index_spree_variant_properties_on_variant_id")
+}
+
+model spree_variants {
+  id                       Int       @id @default(autoincrement())
+  sku                      String    @default("") @db.VarChar
+  weight                   Decimal?  @default(0.0) @db.Decimal(8, 2)
+  height                   Decimal?  @db.Decimal(8, 2)
+  width                    Decimal?  @db.Decimal(8, 2)
+  depth                    Decimal?  @db.Decimal(8, 2)
+  deleted_at               DateTime? @db.Timestamp(6)
+  is_master                Boolean?  @default(false)
+  product_id               Int?
+  cost_price               Decimal?  @db.Decimal(10, 2)
+  position                 Int?
+  cost_currency            String?   @db.VarChar
+  track_inventory          Boolean?  @default(true)
+  tax_category_id          Int?
+  updated_at               DateTime  @db.Timestamp(6)
+  discontinue_on           DateTime? @db.Timestamp(6)
+  core_resource_id         Int?      @default(0)
+  brosa_price              Decimal?  @default(0) @db.Decimal(8, 2)
+  sale_price               Decimal?  @default(0) @db.Decimal(8, 2)
+  stock                    Int?      @default(0)
+  kind                     Int?      @default(0)
+  brosa_created_at         DateTime? @db.Timestamp(6)
+  brosa_updated_at         DateTime? @db.Timestamp(6)
+  is_visible               Boolean?  @default(true)
+  traditional_retail_price Decimal?  @default(0.0) @db.Decimal(8, 2)
+  available_on             DateTime? @db.Timestamp(6)
+  type                     Int       @default(1)
+  created_at               DateTime  @db.Timestamp(6)
+  ninety_days_revenue      Decimal?  @default(0) @db.Decimal(12, 2)
+
+  @@index([deleted_at], map: "index_spree_variants_on_deleted_at")
+  @@index([discontinue_on], map: "index_spree_variants_on_discontinue_on")
+  @@index([is_master], map: "index_spree_variants_on_is_master")
+  @@index([kind], map: "index_spree_variants_on_kind")
+  @@index([position], map: "index_spree_variants_on_position")
+  @@index([product_id], map: "index_spree_variants_on_product_id")
+  @@index([sku], map: "index_spree_variants_on_sku")
+  @@index([tax_category_id], map: "index_spree_variants_on_tax_category_id")
+  @@index([track_inventory], map: "index_spree_variants_on_track_inventory")
+  @@index([type], map: "index_spree_variants_on_type")
+}
+
+model spree_variants_taxons {
+  id         Int       @id @default(autoincrement())
+  taxon_id   Int?
+  variant_id Int?
+  deleted_at DateTime? @db.Timestamp(6)
+
+  @@index([deleted_at], map: "index_spree_variants_taxons_on_deleted_at")
+  @@index([taxon_id], map: "index_spree_variants_taxons_on_taxon_id")
+  @@index([variant_id], map: "index_spree_variants_taxons_on_variant_id")
+}
+
+model spree_wished_products {
+  id          Int      @id @default(autoincrement())
+  variant_id  Int?
+  wishlist_id Int?
+  quantity    Int      @default(1)
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+  kind        Int?     @default(0)
+
+  @@index([kind], map: "index_spree_wished_products_on_kind")
+  @@index([variant_id], map: "index_spree_wished_products_on_variant_id")
+  @@index([wishlist_id], map: "index_spree_wished_products_on_wishlist_id")
+}
+
+model spree_wishlists {
+  id          Int      @id @default(autoincrement())
+  user_id     Int?
+  name        String?  @db.VarChar
+  slug        String?  @db.VarChar
+  guest_token String?  @db.VarChar
+  is_private  Boolean?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @db.Timestamp(6)
+
+  @@index([guest_token], map: "index_spree_wishlists_on_guest_token")
+  @@index([name], map: "index_spree_wishlists_on_name")
+  @@index([slug], map: "index_spree_wishlists_on_slug")
+}
+
+model spree_zipmoney_transactions {
+  id                 Int      @id @default(autoincrement())
+  source_id          Int?
+  amount             Decimal? @db.Decimal(8, 2)
+  action             String?  @db.VarChar
+  authorization_code String?  @db.VarChar
+  originator_id      Int?
+  originator_type    String?  @db.VarChar
+  success            Boolean?
+  created_at         DateTime @db.Timestamp(6)
+  updated_at         DateTime @db.Timestamp(6)
+
+  @@index([originator_type, originator_id], map: "index_spree_zipmoney_transactions_on_originator")
+  @@index([source_id], map: "index_spree_zipmoney_transactions_on_source_id")
+}
+
+model spree_zipmoneys {
+  id                Int      @id @default(autoincrement())
+  payment_method_id Int?
+  user_id           Int?
+  email             String?  @db.VarChar
+  transaction_id    String?  @db.VarChar
+  redirect_url      String?  @db.VarChar
+  amount_allocated  Decimal? @db.Decimal(8, 2)
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @db.Timestamp(6)
+  pending           Boolean  @default(false)
+
+  @@index([payment_method_id], map: "index_spree_zipmoneys_on_payment_method_id")
+  @@index([user_id], map: "index_spree_zipmoneys_on_user_id")
+}
+
+model spree_zone_members {
+  id            Int      @id @default(autoincrement())
+  zoneable_id   Int?
+  zoneable_type String?  @db.VarChar
+  zone_id       Int?
+  created_at    DateTime @db.Timestamp(6)
+  updated_at    DateTime @db.Timestamp(6)
+
+  @@index([zone_id], map: "index_spree_zone_members_on_zone_id")
+  @@index([zoneable_id, zoneable_type], map: "index_spree_zone_members_on_zoneable_id_and_zoneable_type")
+}
+
+model spree_zones {
+  id                 Int      @id @default(autoincrement())
+  name               String?  @db.VarChar
+  description        String?  @db.VarChar
+  default_tax        Boolean? @default(false)
+  zone_members_count Int?     @default(0)
+  created_at         DateTime @db.Timestamp(6)
+  updated_at         DateTime @db.Timestamp(6)
+  kind               String?  @db.VarChar
+
+  @@index([default_tax], map: "index_spree_zones_on_default_tax")
+  @@index([kind], map: "index_spree_zones_on_kind")
+}
+
+model votes {
+  id           Int       @id @default(autoincrement())
+  votable_id   Int?
+  votable_type String?   @db.VarChar
+  voter_id     Int?
+  voter_type   String?   @db.VarChar
+  vote_flag    Boolean?
+  vote_scope   String?   @db.VarChar
+  vote_weight  Int?
+  created_at   DateTime? @db.Timestamp(6)
+  updated_at   DateTime? @db.Timestamp(6)
+
+  @@index([votable_id, votable_type, vote_scope], map: "index_votes_on_votable_id_and_votable_type_and_vote_scope")
+  @@index([voter_id, voter_type, vote_scope], map: "index_votes_on_voter_id_and_voter_type_and_vote_scope")
+}
+
+model vwo_impressions {
+  id             BigInt   @id @default(autoincrement())
+  user_id        String?  @db.VarChar
+  campaign_id    String?  @db.VarChar
+  variation_name String?  @db.VarChar
+  created_at     DateTime @db.Timestamp(6)
+  updated_at     DateTime @db.Timestamp(6)
+
+  @@index([user_id, variation_name], map: "index_vwo_impressions_on_user_id_and_variation_name")
+}
