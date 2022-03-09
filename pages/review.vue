@@ -1,9 +1,12 @@
 <template>
   <div class="root">
     <div class="review-card" v-for="review in reviews" :key="review.id">
-      <div class="review-item">{{review.name}}</div>
-      <div class="review-item"><b>Rating: </b>{{review.rating}}</div>
-      <div class="review-item">{{review.review}}</div>
+      <div class="review-item">{{ review.name }}</div>
+      <div class="review-item">
+        <b>Rating:</b>
+        {{ review.rating }}
+      </div>
+      <div class="review-item">{{ review.review }}</div>
     </div>
   </div>
 </template>
@@ -23,15 +26,15 @@
 </style>
 <script>
 
-const graphQuery = {query : `
-query {
-  reviews(id: 1) {
-    id
-    name
-    rating
-    review
+const graphQuery = {
+  query: `query {
+    reviews(id: 1) {
+      id
+      name
+      rating
+      review
+    }
   }
-}
 `
 }
 
@@ -46,8 +49,8 @@ export default {
     fetch('/api/graphql', {
       method: 'POST',
       headers: {
-      'Content-Type': 'application/json'
-    },
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(graphQuery)
     }).then(data => data.json()).then(data => {
       this.reviews = data.data.reviews
