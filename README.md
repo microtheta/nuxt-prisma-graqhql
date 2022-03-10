@@ -1,6 +1,9 @@
-# Nuxt 3 Minimal Starter
+# Demo app for nuxt3, prisma and graphql, nexus Minimal Starter
 
-We recommend to look at the [documentation](https://v3.nuxtjs.org).
+- [Nuxt](https://v3.nuxtjs.org)
+- [Prisma](https://www.prisma.io/)
+- [Applo graphql](https://www.apollographql.com/docs/)
+- [Nexus schema builder](https://nexusjs.org/docs/guides/schema)
 
 ## Setup
 - ### Create `.env` file, refer to .env.example for reference.
