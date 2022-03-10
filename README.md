@@ -3,12 +3,13 @@
 We recommend to look at the [documentation](https://v3.nuxtjs.org).
 
 ## Setup
+- ### Create `.env` file, refer to .env.example for reference.
 
-Make sure to install the dependencies
+- Make sure to install the dependencies
 
-```bash
-yarn install
-```
+  ```bash
+  yarn install
+  ```
 
 ## Development
 
