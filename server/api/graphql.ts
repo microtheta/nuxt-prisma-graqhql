@@ -7,6 +7,11 @@ import { schema } from '~~/graphql/schema';
 
 const apolloServer = new ApolloServer({
   schema,
+  context: ({ req }) => {
+    //console.log(req.headers)
+    return req;
+  },
+
   plugins: [
     ApolloServerPluginLandingPageGraphQLPlayground(),
   ],

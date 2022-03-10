@@ -1,4 +1,4 @@
-import { extendType, objectType } from 'nexus'
+import { nonNull, intArg, extendType, objectType } from 'nexus'
 
 const PostsDataSource = [{
   id: 1,
@@ -49,10 +49,20 @@ export const Post = objectType({
 export const PostQuery = extendType({
   type: 'Query',
   definition(t) {
+    t.field('post', {
+      description: 'Posts with give id',
+      type: 'Post',
+      args: {
+        id:  nonNull(intArg())
+      },
+      resolve(parent, args, context) {
+        return PostsDataSource.find(p => p.id == args.id);
+      }
+    }),
     t.list.field('posts', {
       description: 'Sample posts that are published',
       type: 'Post',
-      resolve(parent, args, context) {
+      resolve(parent, args, context, info) {
         return PostsDataSource.filter(p => p.published);
       }
     })

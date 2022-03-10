@@ -7,6 +7,11 @@ export const Product = objectType({
   definition(t) {
     t.nonNull.id('id')
     t.string('name')
+    t.string('productname', {
+      resolve(parent) {
+        return parent.name;
+      }
+    })
     t.string('description')
     t.string('slug')
     t.int('reviews_count')
@@ -30,7 +35,7 @@ export const ProductQuery = extendType({
     t.nonNull.list.field('products', {
       type: 'Product',
       resolve(parent, args, context) {
-        return prisma.spree_products.findMany({
+        return  prisma.spree_products.findMany({
           where: {
             deleted_at: null
           },
